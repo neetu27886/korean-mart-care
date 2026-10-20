@@ -1,1 +1,2 @@
-# korean-mart-care
+# Korean Mart Care
+100% Authentic Korean Skincare in Bangladesh - Live on Netlify
