@@ -365,6 +365,14 @@ function renderSiteBrandingAndSettings() {
   const s = AppState.storeState.settings;
   const deliveryFee = Number(s.deliveryCharge ?? 110);
 
+  if (s.fontFamily) {
+    document.documentElement.style.setProperty('--font-main', s.fontFamily);
+    document.body.style.fontFamily = s.fontFamily;
+  }
+  if (s.fontSize) {
+    document.documentElement.style.fontSize = s.fontSize;
+  }
+
   document.title = `${s.siteName || 'Korean Mart Care'} | ${s.tagline || '100% Authentic Korean Skincare'}`;
 
   const annPrimary = document.getElementById('announcementTextPrimary');
@@ -1618,12 +1626,25 @@ function renderAdminBrandingForm() {
   setVal('settingSiteName', s.siteName || 'Korean Mart Care');
   setVal('settingTagline', s.tagline || '');
   setVal('settingDeliveryCharge', s.deliveryCharge ?? 110);
+  setVal('quickDeliveryChargeInput', s.deliveryCharge ?? 110);
+  setVal('settingFontFamily', s.fontFamily || "'Jost', 'Hind Siliguri', sans-serif");
+  setVal('quickFontFamilySelect', s.fontFamily || "'Jost', 'Hind Siliguri', sans-serif");
+  setVal('settingFontSize', s.fontSize || '100%');
+  setVal('quickFontSizeSelect', s.fontSize || '100%');
   setVal('settingWhatsappNumber', s.whatsappNumber || '8801700000000');
   setVal('settingMessengerLink', s.messengerLink || '');
   setVal('settingSupportPhone', s.supportPhone || '');
   setVal('settingAnnouncementText', s.announcementText || '');
   setVal('settingHeroTitle', s.heroTitle || '');
   setVal('settingHeroSubtitle', s.heroSubtitle || '');
+
+  try {
+    const rawGh = localStorage.getItem(STORAGE_GITHUB_CFG_KEY);
+    if (rawGh) {
+      const gh = JSON.parse(rawGh);
+      if (gh.token) setVal('quickGithubTokenInput', gh.token);
+    }
+  } catch (e) {}
 }
 
 function renderAdminBrandsGrid() {
@@ -2606,12 +2627,46 @@ function bindEvents() {
     await saveStoreState('♻️ ডিফল্ট Korean Mart Care লোগো রিসেট করা হয়েছে!');
   });
 
+  document.getElementById('saveQuickControlsBtn')?.addEventListener('click', async () => {
+    const s = AppState.storeState.settings;
+    const delVal = document.getElementById('quickDeliveryChargeInput')?.value;
+    if (delVal !== undefined && delVal !== '') {
+      s.deliveryCharge = Number(delVal);
+    }
+    const fontFam = document.getElementById('quickFontFamilySelect')?.value;
+    if (fontFam) s.fontFamily = fontFam;
+    const fontSz = document.getElementById('quickFontSizeSelect')?.value;
+    if (fontSz) s.fontSize = fontSz;
+
+    const quickTok = document.getElementById('quickGithubTokenInput')?.value.trim();
+    if (quickTok) {
+      const repo = document.getElementById('githubRepoInput')?.value.trim() || 'neetu27886/korean-mart-care';
+      const branch = document.getElementById('githubBranchInput')?.value.trim() || 'main';
+      localStorage.setItem(STORAGE_GITHUB_CFG_KEY, JSON.stringify({ repo, branch, token: quickTok }));
+      const tokInput = document.getElementById('githubTokenInput');
+      if (tokInput) tokInput.value = quickTok;
+    }
+
+    await saveStoreState('✅ ফন্ট, ডেলিভারি চার্জ ও ক্লাউড সিঙ্ক সফলভাবে সেভ ও আপডেট হয়েছে!');
+  });
+
+  document.querySelectorAll('[data-jump-tab]').forEach((card) => {
+    card.addEventListener('click', () => {
+      const targetTab = card.getAttribute('data-jump-tab');
+      const tabBtn = document.querySelector(`[data-admin-tab="${targetTab}"]`);
+      tabBtn?.click();
+      tabBtn?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+
   document.getElementById('siteSettingsForm')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const s = AppState.storeState.settings;
     s.siteName = document.getElementById('settingSiteName')?.value.trim() || 'Korean Mart Care';
     s.tagline = document.getElementById('settingTagline')?.value.trim() || '';
     s.deliveryCharge = Number(document.getElementById('settingDeliveryCharge')?.value ?? 110);
+    s.fontFamily = document.getElementById('settingFontFamily')?.value || "'Jost', 'Hind Siliguri', sans-serif";
+    s.fontSize = document.getElementById('settingFontSize')?.value || '100%';
     s.whatsappNumber = document.getElementById('settingWhatsappNumber')?.value.trim() || '8801700000000';
     s.messengerLink = document.getElementById('settingMessengerLink')?.value.trim() || '';
     s.supportPhone = document.getElementById('settingSupportPhone')?.value.trim() || '';
@@ -2619,7 +2674,7 @@ function bindEvents() {
     s.heroTitle = document.getElementById('settingHeroTitle')?.value.trim() || '';
     s.heroSubtitle = document.getElementById('settingHeroSubtitle')?.value.trim() || '';
 
-    await saveStoreState('⚙️ পেজের নাম, ডেলিভারি চার্জ ও সেটিংস আপডেট হয়েছে!');
+    await saveStoreState('⚙️ পেজের নাম, ফন্ট, ডেলিভারি চার্জ ও সেটিংস আপডেট হয়েছে!');
   });
 
   const runKcBazarImport = async (payload) => {

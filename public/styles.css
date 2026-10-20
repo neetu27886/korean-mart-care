@@ -2104,16 +2104,22 @@ body {
 
 .admin-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 18px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 820px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .admin-stat-card {
   background: #fff;
   border: 1px solid var(--border-light);
   border-radius: var(--radius-sm);
-  padding: 14px 16px;
+  padding: 11px 12px;
 }
 
 .stat-label {
@@ -2135,24 +2141,30 @@ body {
 }
 
 .admin-tabs-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+}
+
+@media (min-width: 900px) {
+  .admin-tabs-bar {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
 .admin-tab-btn {
   background: #fff;
-  border: 1px solid var(--border-medium);
+  border: 1.5px solid var(--border-medium);
   color: var(--text-dark);
-  padding: 9px 15px;
+  padding: 11px 10px;
   border-radius: var(--radius-xs);
-  font-size: 0.84rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  white-space: nowrap;
+  text-align: center;
   font-family: var(--font-main);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .admin-tab-btn.active {

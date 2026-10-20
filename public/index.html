@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#E0186E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@400;500;600;700&family=Baloo+Da+2:wght@400;500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Jost:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body id="top">
@@ -372,50 +372,95 @@
         </div>
       </div>
 
-      <!-- Quick Stats Row -->
-      <div class="admin-stats-grid">
-        <div class="admin-stat-card">
-          <span class="stat-label">মোট স্কিনকেয়ার প্রোডাক্ট</span>
-          <strong class="stat-value" id="statTotalProducts">460</strong>
-          <span class="stat-meta">Only Skin Care from KC Bazar</span>
-        </div>
-        <div class="admin-stat-card">
-          <span class="stat-label">মোট ব্র্যান্ড কালেকশন</span>
-          <strong class="stat-value" id="statTotalBrands">82</strong>
-          <span class="stat-meta">Korean Authentic Brands</span>
-        </div>
-        <div class="admin-stat-card">
-          <span class="stat-label">ডেলিভারি চার্জ (এডিটেবল)</span>
-          <strong class="stat-value" id="statDeliveryCharge">৳ 110</strong>
-          <span class="stat-meta">No Free Delivery Text Shown</span>
-        </div>
-        <div class="admin-stat-card">
-          <span class="stat-label">কাস্টমার অর্ডার</span>
-          <strong class="stat-value" id="statTotalOrders">0</strong>
-          <span class="stat-meta">WhatsApp + Website Orders</span>
-        </div>
-      </div>
-
-      <!-- Control App Navigation Tabs -->
+      <!-- Control App Navigation Tabs (2x3 Grid on Mobile - Right at Top!) -->
       <div class="admin-tabs-bar" role="tablist">
         <button type="button" class="admin-tab-btn active" data-admin-tab="products">
-          📦 প্রোডাক্ট, দাম ও ছবি কন্ট্রোল
+          📦 প্রোডাক্ট, দাম ও ছবি
         </button>
         <button type="button" class="admin-tab-btn" data-admin-tab="branding">
-          🎨 লোগো আপলোড ও সাইট সেটিংস
+          🎨 লোগো, ফন্ট ও ডেলিভারি
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="cloud">
+          ☁️ ক্লাউড সিঙ্ক ও GitHub
         </button>
         <button type="button" class="admin-tab-btn" data-admin-tab="kcbazar">
-          🔄 KC Bazar লাইভ ইমপোর্ট
+          🔄 KC Bazar অটো-সিঙ্ক
         </button>
         <button type="button" class="admin-tab-btn" data-admin-tab="brands">
-          🏷️ ব্র্যান্ড কালেকশন কন্ট্রোল
+          🏷️ ব্র্যান্ড কালেকশন
         </button>
         <button type="button" class="admin-tab-btn" data-admin-tab="orders">
           🧾 অর্ডার লিস্ট (<span id="adminTabOrderCount">0</span>)
         </button>
-        <button type="button" class="admin-tab-btn" data-admin-tab="cloud">
-          ☁️ ক্লাউড সিঙ্ক ও Netlify
-        </button>
+      </div>
+
+      <!-- Instant Quick Control Card: Delivery Charge, Font Change & Cloud Sync -->
+      <div class="admin-panel-card" style="border: 2px solid var(--kcb-pink); background: #FFF8FB; margin-bottom: 16px;">
+        <h2 style="font-size:1.05rem; color:var(--kcb-pink); margin-bottom:10px;">
+          ⚡ কুইক কন্ট্রোল (ডেলিভারি চার্জ, লেখার ফন্ট চেঞ্জ ও ক্লাউড সিঙ্ক)
+        </h2>
+        <div class="form-row-3">
+          <div class="form-group" style="margin-bottom:8px;">
+            <label>🚚 ডেলিভারি চার্জ (টাকা):</label>
+            <input type="number" id="quickDeliveryChargeInput" class="admin-input" value="110" min="0" />
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label>🔤 ওয়েবসাইটের লেখার ফন্ট (Font Style):</label>
+            <select id="quickFontFamilySelect" class="admin-select">
+              <option value="'Jost', 'Hind Siliguri', sans-serif">Jost + Hind Siliguri (KC Bazar Default)</option>
+              <option value="'Poppins', 'Noto Sans Bengali', sans-serif">Poppins + Noto Sans (Modern Rounded)</option>
+              <option value="'Montserrat', 'Hind Siliguri', sans-serif">Montserrat + Hind Siliguri (Luxury Bold)</option>
+              <option value="'Inter', 'Anek Bangla', sans-serif">Inter + Anek Bangla (Apple Clean)</option>
+              <option value="'Quicksand', 'Baloo Da 2', sans-serif">Quicksand + Baloo Da 2 (Cute Soft)</option>
+              <option value="'Playfair Display', 'Noto Sans Bengali', serif">Playfair Display (Classic Editorial)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:8px;">
+            <label>🔠 লেখার সাইজ (Font Size):</label>
+            <select id="quickFontSizeSelect" class="admin-select">
+              <option value="100%">Normal (100% — স্ট্যান্ডার্ড)</option>
+              <option value="105%">Medium Large (105% — একটু বড়)</option>
+              <option value="110%">Large (110% — বড় ও স্পষ্ট)</option>
+              <option value="95%">Compact (95% — ছোট ও ছিমছাম)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-2" style="align-items:end; margin-top:4px;">
+          <div class="form-group" style="margin-bottom:6px;">
+            <label>☁️ ক্লাউড সিঙ্ক (GitHub Token `ghp_...` একবার বসালেই অটো সিঙ্ক হবে):</label>
+            <input type="password" id="quickGithubTokenInput" class="admin-input" placeholder="এখানে আপনার ghp_... টোকেনটি পেস্ট করুন" />
+          </div>
+          <div class="form-group" style="margin-bottom:6px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn-kcb-pink" id="saveQuickControlsBtn" style="flex:1;">
+              💾 ফন্ট, ডেলিভারি ও ক্লাউড সিঙ্ক সেভ করুন
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats Row (2x2 Compact Grid on Mobile) -->
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card" data-jump-tab="products" style="cursor:pointer;">
+          <span class="stat-label">মোট স্কিনকেয়ার প্রোডাক্ট</span>
+          <strong class="stat-value" id="statTotalProducts">460</strong>
+          <span class="stat-meta">ট্যাপ করে দাম ও ছবি এডিট করুন</span>
+        </div>
+        <div class="admin-stat-card" data-jump-tab="brands" style="cursor:pointer;">
+          <span class="stat-label">মোট ব্র্যান্ড কালেকশন</span>
+          <strong class="stat-value" id="statTotalBrands">82</strong>
+          <span class="stat-meta">Korean Authentic Brands</span>
+        </div>
+        <div class="admin-stat-card" data-jump-tab="branding" style="cursor:pointer;">
+          <span class="stat-label">ডেলিভারি চার্জ (এডিটেবল)</span>
+          <strong class="stat-value" id="statDeliveryCharge">৳ 110</strong>
+          <span class="stat-meta">✏️ ট্যাপ করে পরিবর্তন করুন</span>
+        </div>
+        <div class="admin-stat-card" data-jump-tab="orders" style="cursor:pointer;">
+          <span class="stat-label">কাস্টমার অর্ডার</span>
+          <strong class="stat-value" id="statTotalOrders">0</strong>
+          <span class="stat-meta">WhatsApp + Website Orders</span>
+        </div>
       </div>
 
       <!-- TAB 1: PRODUCTS, PRICES & PHOTOS CONTROL -->
@@ -509,6 +554,29 @@
                 <div class="form-group">
                   <label>🟢 WhatsApp অর্ডার নাম্বার (Country Code সহ, যেমন: 88017...)</label>
                   <input type="text" id="settingWhatsappNumber" class="admin-input" placeholder="8801700000000" required />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>🔤 ওয়েবসাইটের লেখার ফন্ট স্টাইল (Font Family)</label>
+                  <select id="settingFontFamily" class="admin-select">
+                    <option value="'Jost', 'Hind Siliguri', sans-serif">Jost + Hind Siliguri (KC Bazar Default)</option>
+                    <option value="'Poppins', 'Noto Sans Bengali', sans-serif">Poppins + Noto Sans (Modern Rounded)</option>
+                    <option value="'Montserrat', 'Hind Siliguri', sans-serif">Montserrat + Hind Siliguri (Luxury Bold)</option>
+                    <option value="'Inter', 'Anek Bangla', sans-serif">Inter + Anek Bangla (Apple Clean)</option>
+                    <option value="'Quicksand', 'Baloo Da 2', sans-serif">Quicksand + Baloo Da 2 (Cute Soft)</option>
+                    <option value="'Playfair Display', 'Noto Sans Bengali', serif">Playfair Display (Classic Editorial)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>🔠 ওয়েবসাইটের লেখার সাইজ (Font Size)</label>
+                  <select id="settingFontSize" class="admin-select">
+                    <option value="100%">Normal (100% — স্ট্যান্ডার্ড)</option>
+                    <option value="105%">Medium Large (105% — একটু বড়)</option>
+                    <option value="110%">Large (110% — বড় ও স্পষ্ট)</option>
+                    <option value="95%">Compact (95% — ছোট ও ছিমছাম)</option>
+                  </select>
                 </div>
               </div>
 
