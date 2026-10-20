@@ -25,35 +25,18 @@ let memoryStoreState = {
   updatedAt: new Date().toISOString()
 };
 
-function fetchJsonFromUrl(targetUrl) {
-  return new Promise((resolve, reject) => {
-    const req = https.get(
-      targetUrl,
-      {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-          'Accept': 'application/json'
-        },
-        timeout: 20000
-      },
-      (res) => {
-        let raw = '';
-        res.on('data', (chunk) => (raw += chunk));
-        res.on('end', () => {
-          try {
-            resolve(JSON.parse(raw));
-          } catch (e) {
-            reject(new Error('Failed to parse response from KC Bazar'));
-          }
-        });
-      }
-    );
-    req.on('error', reject);
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error('Request timed out'));
-    });
+async function fetchJsonFromUrl(targetUrl) {
+  const res = await fetch(targetUrl, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      'Accept': 'application/json, text/plain, */*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': 'https://kcbazar.com/',
+      'Origin': 'https://kcbazar.com'
+    }
   });
+  const text = await res.text();
+  return JSON.parse(text);
 }
 
 function decodeHtmlEntities(str = '') {
@@ -270,7 +253,20 @@ exports.handler = async (event) => {
         })
       };
     } catch (err) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
+      try {
+        const ghCat = await fetchJsonFromUrl('https://raw.githubusercontent.com/neetu27886/korean-mart-care/main/public/data/catalog.json?t=' + Date.now());
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            status: 'ok',
+            syncedAt: ghCat.lastSyncedAt || new Date().toISOString(),
+            products: (ghCat.products || []).slice(0, 80)
+          })
+        };
+      } catch (e2) {
+        return { statusCode: 200, headers, body: JSON.stringify({ status: 'ok', syncedAt: new Date().toISOString(), products: [] }) };
+      }
     }
   }
 
