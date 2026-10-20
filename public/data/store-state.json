@@ -17,7 +17,28 @@
     "fontFamily": "'Poppins', 'Noto Sans Bengali', sans-serif",
     "fontSize": "110%"
   },
-  "productOverrides": {},
+  "productOverrides": {
+    "68413": {
+      "name": "Arencia Retinal Booster Shot 30 ml",
+      "brand": "Arencia",
+      "brandSlug": "arencia",
+      "salePrice": 1300,
+      "regularPrice": 1450,
+      "inStock": true,
+      "primaryCategory": "Serum-Essence-Ampoule",
+      "primaryCategorySlug": "serum-essence-ampoule",
+      "weight": "30 ml",
+      "sku": "8809562192763",
+      "description": "",
+      "images": [
+        "https://kcbazar.com/wp-content/uploads/2026/10/Arencia-Retinal-Booster-Shot-30-ml-5.jpg",
+        "https://kcbazar.com/wp-content/uploads/2026/10/Arencia-Retinal-Booster-Shot-30-ml-1.jpg",
+        "https://kcbazar.com/wp-content/uploads/2026/10/Arencia-Retinal-Booster-Shot-30-ml-2.jpg",
+        "https://kcbazar.com/wp-content/uploads/2026/10/Arencia-Retinal-Booster-Shot-30-ml-3.jpg",
+        "https://kcbazar.com/wp-content/uploads/2026/10/Arencia-Retinal-Booster-Shot-30-ml-4.jpg"
+      ]
+    }
+  },
   "customProducts": [],
   "deletedProductIds": [],
   "brandOverrides": {},
