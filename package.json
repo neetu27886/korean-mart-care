@@ -1,0 +1,16 @@
+{
+  "name": "korean-mart-care",
+  "version": "1.0.0",
+  "description": "Korean Mart Care - Authentic Korean Skincare E-Commerce Store & Control App (Netlify Ready)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "sync-kcbazar": "node scripts/sync-kcbazar.js",
+    "build": "echo 'Static files in public/ and Netlify functions in netlify/functions/ are ready!'"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5"
+  }
+}
