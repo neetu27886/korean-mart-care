@@ -1,2 +1,2 @@
 # Korean Mart Care
-100% Authentic Korean Skincare in Bangladesh - Instagram & Facebook Connected
+100% Authentic Korean Skincare in Bangladesh - Clean Product Share Links
