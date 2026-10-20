@@ -22,9 +22,9 @@ const AppState = {
       logoUrl: '',
       deliveryCharge: 110,
       deliveryNote: 'সারা বাংলাদেশে হোম ডেলিভারি চার্জ ১১০ টাকা (২৪-৪৮ ঘণ্টার মধ্যে ডেলিভারি)',
-      whatsappNumber: '8801700000000',
-      messengerLink: 'https://m.me/KoreanMartCare',
-      facebookPage: 'https://facebook.com/KoreanMartCare',
+      messengerLink: 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr',
+      facebookPage: 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr',
+      instagramLink: 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr',
       supportPhone: '+880 1700-000000',
       announcementText:
         '🎉 Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা)',
@@ -188,7 +188,14 @@ async function initApp() {
 function mergeIntoStoreState(incoming) {
   if (!incoming || typeof incoming !== 'object') return;
   if (incoming.settings) {
-    AppState.storeState.settings = { ...AppState.storeState.settings, ...incoming.settings };
+    const incSet = { ...incoming.settings };
+    if (!incSet.messengerLink || incSet.messengerLink.includes('m.me/KoreanMartCare') || incSet.messengerLink.includes('facebook.com/KoreanMartCare')) {
+      incSet.messengerLink = 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
+    }
+    if (!incSet.instagramLink) {
+      incSet.instagramLink = 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+    }
+    AppState.storeState.settings = { ...AppState.storeState.settings, ...incSet };
   }
   if (incoming.productOverrides) {
     AppState.storeState.productOverrides = { ...AppState.storeState.productOverrides, ...incoming.productOverrides };
@@ -397,8 +404,7 @@ function renderSiteBrandingAndSettings() {
 
   const supportLink = document.getElementById('headerSupportLink');
   if (supportLink) {
-    const cleanPhone = String(s.whatsappNumber || '8801700000000').replace(/[^0-9]/g, '');
-    supportLink.href = `https://wa.me/${cleanPhone}`;
+    supportLink.href = s.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
   }
 
   const setTxt = (id, val) => {
@@ -1033,7 +1039,7 @@ function openProductDetailBySlugOrId(slugOrId) {
             <button type="button" class="btn-kcb-pink-sm" id="pdCopyShareUrlBtn">Copy Link</button>
           </div>
           <div class="pd-social-share-btns">
-            <button type="button" class="share-pill-btn" data-social-share="whatsapp">🟢 WhatsApp</button>
+            <button type="button" class="share-pill-btn" data-social-share="instagram">📸 Instagram</button>
             <button type="button" class="share-pill-btn" data-social-share="facebook">🔵 Facebook</button>
             <button type="button" class="share-pill-btn" data-social-share="telegram">✈️ Telegram</button>
             <button type="button" class="share-pill-btn" data-social-share="native">📲 Share</button>
@@ -1175,8 +1181,10 @@ function openProductDetailBySlugOrId(slugOrId) {
     btn.addEventListener('click', () => {
       const type = btn.getAttribute('data-social-share');
       const text = `${product.name} — ${formatPrice(product.salePrice)} at ${siteName}`;
-      if (type === 'whatsapp') {
-        window.open(`https://wa.me/?text=${encodeURIComponent(text + '\n' + shareUrl)}`, '_blank');
+      if (type === 'instagram') {
+        copyTextToClipboard(shareUrl, 'লিঙ্ক কপি হয়েছে! Instagram ওপেন হচ্ছে...');
+        const igLink = AppState.storeState.settings.instagramLink || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+        window.open(igLink, '_blank');
       } else if (type === 'facebook') {
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
       } else if (type === 'telegram') {
@@ -1434,13 +1442,13 @@ async function processOrderSubmission(channel = 'whatsapp') {
   renderCartBadgeAndDrawer();
   if (AppState.isControlAppOpen) renderAdminDashboard();
 
-  if (channel === 'whatsapp') {
-    const cleanPhone = String(s.whatsappNumber || '8801700000000').replace(/[^0-9]/g, '');
-    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`, '_blank');
-    showToast(`✅ অর্ডার #${orderId} কনফার্ম হয়েছে! WhatsApp ওপেন হচ্ছে...`);
+  if (channel === 'instagram') {
+    copyTextToClipboard(messageText, 'অর্ডার ডিটেইলস কপি হয়েছে! Instagram ইনবক্সে পেস্ট করে পাঠিয়ে দিন।');
+    const igLink = s.instagramLink || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+    setTimeout(() => window.open(igLink, '_blank'), 450);
   } else if (channel === 'messenger') {
-    copyTextToClipboard(messageText, 'অর্ডার ডিটেইলস কপি হয়েছে! Messenger-এ পেস্ট করে পাঠিয়ে দিন।');
-    const msgLink = s.messengerLink || 'https://m.me/KoreanMartCare';
+    copyTextToClipboard(messageText, 'অর্ডার ডিটেইলস কপি হয়েছে! Facebook / Messenger-এ পেস্ট করে পাঠিয়ে দিন।');
+    const msgLink = s.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
     setTimeout(() => window.open(msgLink, '_blank'), 450);
   } else {
     showToast(`🎉 ধন্যবাদ ${name}! আপনার অর্ডার #${orderId} সফলভাবে গৃহীত হয়েছে।`);
@@ -1631,8 +1639,8 @@ function renderAdminBrandingForm() {
   setVal('quickFontFamilySelect', s.fontFamily || "'Jost', 'Hind Siliguri', sans-serif");
   setVal('settingFontSize', s.fontSize || '100%');
   setVal('quickFontSizeSelect', s.fontSize || '100%');
-  setVal('settingWhatsappNumber', s.whatsappNumber || '8801700000000');
-  setVal('settingMessengerLink', s.messengerLink || '');
+  setVal('settingInstagramLink', s.instagramLink || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr');
+  setVal('settingMessengerLink', s.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr');
   setVal('settingSupportPhone', s.supportPhone || '');
   setVal('settingAnnouncementText', s.announcementText || '');
   setVal('settingHeroTitle', s.heroTitle || '');
@@ -2097,9 +2105,12 @@ function bindEvents() {
         openProductDetailBySlugOrId('beauty-of-joseon-matte-sun-stick');
       } else if (act === 'cart') {
         openCartDrawer(false);
-      } else if (act === 'whatsapp') {
-        const cleanPhone = String(AppState.storeState.settings.whatsappNumber || '8801700000000').replace(/[^0-9]/g, '');
-        window.open(`https://wa.me/${cleanPhone}`, '_blank');
+      } else if (act === 'instagram') {
+        const igLink = AppState.storeState.settings.instagramLink || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+        window.open(igLink, '_blank');
+      } else if (act === 'messenger') {
+        const msgLink = AppState.storeState.settings.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
+        window.open(msgLink, '_blank');
       }
     });
   });
@@ -2249,10 +2260,10 @@ function bindEvents() {
   // Checkout Order Submissions
   document.getElementById('checkoutOrderForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    processOrderSubmission('whatsapp');
-  });
-  document.getElementById('orderViaMessengerBtn')?.addEventListener('click', () => {
     processOrderSubmission('messenger');
+  });
+  document.getElementById('orderViaInstagramBtn')?.addEventListener('click', () => {
+    processOrderSubmission('instagram');
   });
   document.getElementById('orderDirectWebsiteBtn')?.addEventListener('click', () => {
     processOrderSubmission('website');
@@ -2280,13 +2291,13 @@ function bindEvents() {
     renderAllBrandsModalGrid(e.target.value);
   });
 
-  // Sticky 5-Item Bottom Bar Events (WhatsApp, Messenger, Cart, My Account, Menu)
-  document.getElementById('botNavWhatsapp')?.addEventListener('click', () => {
-    const cleanPhone = String(AppState.storeState.settings.whatsappNumber || '8801700000000').replace(/[^0-9]/g, '');
-    window.open(`https://wa.me/${cleanPhone}`, '_blank');
+  // Sticky 5-Item Bottom Bar Events (Instagram, Messenger, Cart, My Account, Menu)
+  document.getElementById('botNavInstagram')?.addEventListener('click', () => {
+    const igLink = AppState.storeState.settings.instagramLink || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+    window.open(igLink, '_blank');
   });
   document.getElementById('botNavMessenger')?.addEventListener('click', () => {
-    const msgLink = AppState.storeState.settings.messengerLink || 'https://m.me/KoreanMartCare';
+    const msgLink = AppState.storeState.settings.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
     window.open(msgLink, '_blank');
   });
   document.getElementById('botNavCart')?.addEventListener('click', () => openCartDrawer(false));
@@ -2667,8 +2678,8 @@ function bindEvents() {
     s.deliveryCharge = Number(document.getElementById('settingDeliveryCharge')?.value ?? 110);
     s.fontFamily = document.getElementById('settingFontFamily')?.value || "'Jost', 'Hind Siliguri', sans-serif";
     s.fontSize = document.getElementById('settingFontSize')?.value || '100%';
-    s.whatsappNumber = document.getElementById('settingWhatsappNumber')?.value.trim() || '8801700000000';
-    s.messengerLink = document.getElementById('settingMessengerLink')?.value.trim() || '';
+    s.instagramLink = document.getElementById('settingInstagramLink')?.value.trim() || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+    s.messengerLink = document.getElementById('settingMessengerLink')?.value.trim() || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
     s.supportPhone = document.getElementById('settingSupportPhone')?.value.trim() || '';
     s.announcementText = document.getElementById('settingAnnouncementText')?.value.trim() || '';
     s.heroTitle = document.getElementById('settingHeroTitle')?.value.trim() || '';

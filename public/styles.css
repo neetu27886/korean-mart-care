@@ -1965,6 +1965,17 @@ body {
   height: 22px;
 }
 
+.instagram-circle {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: #FFFFFF;
+  border-radius: 50%;
+}
+
+.instagram-circle svg {
+  width: 15px;
+  height: 15px;
+}
+
 .whatsapp-circle {
   background: #25D366;
   color: #FFFFFF;

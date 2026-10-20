@@ -167,10 +167,16 @@
               <span>Shopping Cart & Checkout</span>
             </div>
           </li>
-          <li class="kcb-cat-row" data-menu-action="whatsapp">
+          <li class="kcb-cat-row" data-menu-action="instagram">
             <div class="kcb-cat-link">
-              <span class="kcb-pink-icon">💬</span>
-              <span>Order on WhatsApp</span>
+              <span class="kcb-pink-icon">📸</span>
+              <span>Instagram — @korean_mart_care</span>
+            </div>
+          </li>
+          <li class="kcb-cat-row" data-menu-action="messenger">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">🔵</span>
+              <span>Facebook Page / Messenger</span>
             </div>
           </li>
         </ul>
@@ -552,8 +558,8 @@
                   <input type="number" id="settingDeliveryCharge" class="admin-input" value="110" min="0" required />
                 </div>
                 <div class="form-group">
-                  <label>🟢 WhatsApp অর্ডার নাম্বার (Country Code সহ, যেমন: 88017...)</label>
-                  <input type="text" id="settingWhatsappNumber" class="admin-input" placeholder="8801700000000" required />
+                  <label>📸 Instagram পেজ লিংক</label>
+                  <input type="url" id="settingInstagramLink" class="admin-input" value="https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr" placeholder="https://www.instagram.com/korean_mart_care..." />
                 </div>
               </div>
 
@@ -582,8 +588,8 @@
 
               <div class="form-row-2">
                 <div class="form-group">
-                  <label>🔵 Facebook Messenger পেজ লিংক</label>
-                  <input type="text" id="settingMessengerLink" class="admin-input" placeholder="https://m.me/KoreanMartCare" />
+                  <label>🔵 Facebook / Messenger পেজ লিংক</label>
+                  <input type="text" id="settingMessengerLink" class="admin-input" value="https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr" placeholder="https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr" />
                 </div>
                 <div class="form-group">
                   <label>📞 কাস্টমার সাপোর্ট ফোন নাম্বার</label>
@@ -949,14 +955,14 @@
           </div>
 
           <div class="checkout-buttons-stack">
-            <button type="submit" class="btn-kcb-green btn-block" style="padding:13px;">
-              🟢 WhatsApp-এ অর্ডার কনফার্ম করুন
+            <button type="submit" class="btn-kcb-messenger btn-block" style="padding:13px;">
+              🔵 Facebook / Messenger-এ অর্ডার কনফার্ম করুন
             </button>
-            <button type="button" id="orderViaMessengerBtn" class="btn-kcb-messenger btn-block">
-              🔵 Messenger-এ অর্ডার মেসেজ পাঠান
+            <button type="button" id="orderViaInstagramBtn" class="btn-kcb-pink btn-block">
+              📸 Instagram-এ অর্ডার মেসেজ পাঠান
             </button>
-            <button type="button" id="orderDirectWebsiteBtn" class="btn-kcb-pink btn-block">
-              🛍️ ওয়েবসাইটে অর্ডার প্লেস করুন
+            <button type="button" id="orderDirectWebsiteBtn" class="btn-kcb-green btn-block">
+              🛍️ সরাসরি ওয়েবসাইটে অর্ডার প্লেস করুন
             </button>
           </div>
         </form>
@@ -1010,15 +1016,17 @@
     </svg>
   </a>
 
-  <!-- ==================== STICKY 5-ITEM BOTTOM NAVIGATION BAR (EXACT MATCH TO IMG_7790.png) ==================== -->
+  <!-- ==================== STICKY 5-ITEM BOTTOM NAVIGATION BAR (INSTAGRAM + MESSENGER + CART + MY ACCOUNT + MENU) ==================== -->
   <nav class="kcb-bottom-navbar" aria-label="Bottom quick bar">
-    <button type="button" class="kcb-bot-item" id="botNavWhatsapp">
-      <span class="kcb-bot-icon whatsapp-circle">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.51.08-1.15.11-1.86-.12-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.91-4.28-5.06-4.48-.15-.2-1.21-1.61-1.21-3.07 0-1.46.76-2.18 1.03-2.48.27-.3.59-.37.79-.37.2 0 .4 0 .57.01.18.01.43-.07.67.51.24.58.82 2 .89 2.15.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.45.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.08.12.08.72-.16 1.4z"/>
+    <button type="button" class="kcb-bot-item" id="botNavInstagram">
+      <span class="kcb-bot-icon instagram-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
         </svg>
       </span>
-      <span class="kcb-bot-label">WhatsApp</span>
+      <span class="kcb-bot-label">Instagram</span>
     </button>
 
     <button type="button" class="kcb-bot-item" id="botNavMessenger">
