@@ -96,7 +96,7 @@ function getProductShareUrl(product) {
   const url = new URL(window.location.href);
   url.search = '';
   url.hash = '';
-  url.searchParams.set('product', product.slug || String(product.id));
+  url.pathname = `/product/${encodeURIComponent(product.slug || String(product.id))}`;
   return url.toString();
 }
 
@@ -883,7 +883,8 @@ function openProductDetailBySlugOrId(slugOrId) {
 
   try {
     const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('product', product.slug);
+    newUrl.searchParams.delete('product');
+    newUrl.pathname = `/product/${encodeURIComponent(product.slug)}`;
     window.history.replaceState({}, '', newUrl.toString());
   } catch (e) {}
 
@@ -1218,6 +1219,9 @@ function closeProductDetail() {
   try {
     const newUrl = new URL(window.location.href);
     newUrl.searchParams.delete('product');
+    if (newUrl.pathname.startsWith('/product/')) {
+      newUrl.pathname = '/';
+    }
     window.history.replaceState({}, '', newUrl.toString());
   } catch (e) {}
 }
@@ -2049,7 +2053,10 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
 
 function handleInitialUrlRouting() {
   const params = new URLSearchParams(window.location.search);
-  const prodSlug = params.get('product');
+  let prodSlug = params.get('product');
+  if (!prodSlug && window.location.pathname.startsWith('/product/')) {
+    prodSlug = decodeURIComponent(window.location.pathname.replace(/^\/product\//, '').replace(/\/+$/, ''));
+  }
   const appMode = params.get('app');
 
   if (appMode === 'admin' || window.location.hash === '#admin') {
