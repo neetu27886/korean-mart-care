@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Korean Mart Care | Authentic Korean Skincare Products in Bangladesh</title>
+  <meta name="description" content="Korean Mart Care - 100% Authentic Korean Skincare Products in Bangladesh. Shop Beauty of Joseon, COSRX, SKIN1004, Anua, Missha, Dabo & more." />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#E0186E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body id="top">
+  <!-- Top Notice Marquee Bar (KC Bazar Style - No Free Delivery Text, Shows 110 Tk Delivery) -->
+  <div class="top-marquee-bar">
+    <div class="container marquee-inner">
+      <span id="announcementTextPrimary">
+        🎉 <strong>Korean Mart Care</strong> — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা)
+      </span>
+    </div>
+  </div>
+
+  <!-- Main Sticky Header (KC Bazar Clean White Header + Rounded Search with Pink Circle Button) -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-main-row">
+      <!-- Hamburger Menu Trigger (Opens Left Slide-Out CATEGORIES | MENU Drawer) -->
+      <button type="button" class="header-menu-trigger" id="openSideMenuBtn" aria-label="Open Categories & Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="16" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Brand Identity / Logo -->
+      <a href="#top" class="brand-identity" id="brandHomeLink">
+        <div class="brand-logo-wrap" id="headerLogoWrap">
+          <div class="default-kcb-logo" id="defaultLogoSvg">
+            <span class="logo-pink">KOREAN</span>
+            <span class="logo-dark">MART CARE</span>
+          </div>
+          <img id="customLogoImg" class="custom-logo-img hidden" src="" alt="Korean Mart Care Logo" />
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title" id="headerSiteName">Korean Mart Care</span>
+          <span class="brand-subtitle" id="headerTagline">Authentic Korean Skincare</span>
+        </div>
+      </a>
+
+      <!-- Desktop Search Bar -->
+      <div class="header-search-wrap">
+        <div class="kcb-search-box">
+          <input
+            type="search"
+            id="globalSearchInput"
+            placeholder="Search for Korean skincare products, brands..."
+            autocomplete="off"
+          />
+          <button type="button" id="clearSearchBtn" class="clear-search-btn hidden" aria-label="Clear search">✕</button>
+          <button type="button" class="kcb-search-submit-btn" id="searchSubmitBtn" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <circle cx="11" cy="11" r="7.5"></circle>
+              <line x1="20" y1="20" x2="16.2" y2="16.2"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="searchDropdown" class="search-dropdown hidden"></div>
+      </div>
+
+      <!-- Right Icons (Support Headset, Brands, Wishlist, Cart, Control App) -->
+      <div class="header-actions">
+        <a href="https://wa.me/8801700000000" target="_blank" rel="noopener" class="header-icon-btn" id="headerSupportLink" title="Customer Care">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+        </a>
+
+        <button type="button" class="header-icon-btn" id="openBrandsModalBtn" title="Korean Brands">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span class="action-label">Brands</span>
+        </button>
+
+        <button type="button" class="header-icon-btn" id="openWishlistBtn" title="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="kcb-count-badge" id="wishlistCountBadge">0</span>
+        </button>
+
+        <button type="button" class="header-icon-btn" id="openCartBtn" title="Shopping Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="kcb-count-badge" id="cartCountBadge">0</span>
+        </button>
+
+        <button type="button" class="control-app-btn" id="toggleControlAppBtn" title="Open Control App">
+          <span>📱 Control App</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Horizontal Skin Care Subcategory Strip -->
+    <nav class="category-nav-bar">
+      <div class="container category-nav-scroll" id="topCategoryNav"></div>
+    </nav>
+  </header>
+
+  <!-- ==================== LEFT SLIDE-OUT DRAWER (EXACT MATCH TO IMG_7789.png: CATEGORIES | MENU) ==================== -->
+  <div id="sideMenuBackdrop" class="side-drawer-backdrop hidden">
+    <aside class="kcb-side-drawer" aria-label="Mobile Navigation Drawer">
+      <!-- Top Two Tabs: CATEGORIES | MENU -->
+      <div class="kcb-drawer-tabs">
+        <button type="button" class="kcb-drawer-tab active" data-drawer-tab="categories">
+          CATEGORIES
+        </button>
+        <button type="button" class="kcb-drawer-tab" data-drawer-tab="menu">
+          MENU
+        </button>
+      </div>
+
+      <!-- Tab 1: CATEGORIES List with Pink Line-Art Icons, Clean Borders & '>' Chevrons -->
+      <div class="kcb-drawer-content" id="drawerTabCategories">
+        <ul class="kcb-cat-menu-list" id="kcbDrawerCategoryList">
+          <!-- Populated dynamically with exact KC Bazar style rows, pink line icons, OFFER badge, and '>' arrows -->
+        </ul>
+      </div>
+
+      <!-- Tab 2: MENU List -->
+      <div class="kcb-drawer-content hidden" id="drawerTabMenu">
+        <ul class="kcb-cat-menu-list">
+          <li class="kcb-cat-row" data-menu-action="home">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">🏠</span>
+              <span>Home — Korean Mart Care</span>
+            </div>
+          </li>
+          <li class="kcb-cat-row" data-menu-action="all-skincare">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">✨</span>
+              <span>All Skin Care Products (460+)</span>
+            </div>
+          </li>
+          <li class="kcb-cat-row" data-menu-action="brands">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">🏷️</span>
+              <span>Korean Brand Collection (82 Brands)</span>
+            </div>
+          </li>
+          <li class="kcb-cat-row" data-menu-action="featured-product">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">☀️</span>
+              <span>Beauty of Joseon Matte Sun Stick</span>
+            </div>
+          </li>
+          <li class="kcb-cat-row" data-menu-action="cart">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">🛍️</span>
+              <span>Shopping Cart & Checkout</span>
+            </div>
+          </li>
+          <li class="kcb-cat-row" data-menu-action="whatsapp">
+            <div class="kcb-cat-link">
+              <span class="kcb-pink-icon">💬</span>
+              <span>Order on WhatsApp</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ==================== STOREFRONT VIEW ==================== -->
+  <main id="storefrontView" class="storefront-view">
+    <!-- Promotional & Featured Product Hero Banner (KC Bazar Pink/Blue/White Style) -->
+    <section class="kcb-hero-section">
+      <div class="container kcb-hero-grid">
+        <!-- Left Promo Banner -->
+        <div class="kcb-promo-banner">
+          <div class="kcb-promo-pill">🇰🇷 100% AUTHENTIC KOREAN SKINCARE</div>
+          <h1 class="kcb-promo-title" id="heroHeading">Korean Mart Care — Original Skin Care Collection</h1>
+          <p class="kcb-promo-sub" id="heroSubheading">
+            দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অরিজিনাল স্কিনকেয়ার প্রোডাক্ট। ডেলিভারি ম্যানের সামনে পণ্য চেক করে রিসিভ করার সুবিধা!
+          </p>
+
+          <!-- 2x2 Green Feature Box (Exact Match to IMG_7790.png - With Delivery ৳110 instead of Free Delivery) -->
+          <div class="kcb-green-trust-box">
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                <path d="M9 3v6h6V3"></path>
+              </svg>
+              <span>We imported this</span>
+            </div>
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+              <span>100% Authentic</span>
+            </div>
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <span id="heroDeliveryBadgeTitle">Delivery ৳110</span>
+            </div>
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+              <span>2-3 Days Delivery</span>
+            </div>
+          </div>
+
+          <div class="kcb-hero-btns">
+            <a href="#catalogSection" class="btn-kcb-pink">সব স্কিনকেয়ার প্রোডাক্ট দেখুন</a>
+            <button type="button" class="btn-kcb-green" id="heroFeaturedProductBtn">
+              Beauty of Joseon Sun Stick দেখুন
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Featured Product Card (User's Linked Beauty of Joseon Matte Sun Stick) -->
+        <div id="heroSpotlightWrap" class="kcb-spotlight-wrap"></div>
+      </div>
+    </section>
+
+    <!-- Same Brand Collection Section (Authorized Korean Brands like KC Bazar) -->
+    <section class="brand-collection-section" id="brandCollectionSection">
+      <div class="container">
+        <div class="kcb-section-head">
+          <div>
+            <h2 class="kcb-section-title">Authorized Korean Brands <span class="title-bn">(ব্র্যান্ড কালেকশন)</span></h2>
+            <p class="kcb-section-sub">যেকোনো ব্র্যান্ডে ক্লিক করে সেই ব্র্যান্ডের অরিজিনাল স্কিনকেয়ার প্রোডাক্টগুলো দেখুন</p>
+          </div>
+          <div class="section-actions">
+            <button type="button" class="btn-kcb-outline" id="clearBrandFilterBtn" style="display:none;">
+              ✕ সব ব্র্যান্ড রিসেট
+            </button>
+            <button type="button" class="btn-kcb-pink-sm" id="viewAllBrandsBtn">
+              View All Brands (<span id="totalBrandsCount">82</span>)
+            </button>
+          </div>
+        </div>
+
+        <div class="brand-carousel-wrapper">
+          <button type="button" class="carousel-arrow prev" id="brandScrollPrev" aria-label="Previous brands">‹</button>
+          <div class="brand-cards-track" id="brandCardsTrack"></div>
+          <button type="button" class="carousel-arrow next" id="brandScrollNext" aria-label="Next brands">›</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Skin Care Products Catalog -->
+    <section class="catalog-section" id="catalogSection">
+      <div class="container">
+        <div class="catalog-toolbar">
+          <div class="catalog-toolbar-left">
+            <h2 class="catalog-heading" id="catalogDynamicHeading">Skin Care Products</h2>
+            <p class="catalog-count-text" id="catalogCountText">Showing authentic Korean skincare products</p>
+          </div>
+
+          <div class="catalog-toolbar-right">
+            <div class="filter-group">
+              <label for="categorySelectFilter">Category:</label>
+              <select id="categorySelectFilter" class="toolbar-select">
+                <option value="all">All Skin Care</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="brandSelectFilter">Brand:</label>
+              <select id="brandSelectFilter" class="toolbar-select">
+                <option value="all">All Brands</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label for="sortSelectFilter">Sort by:</label>
+              <select id="sortSelectFilter" class="toolbar-select">
+                <option value="featured">Sort by popularity</option>
+                <option value="multi_image">Multiple Photos First</option>
+                <option value="price_asc">Sort by price: low to high</option>
+                <option value="price_desc">Sort by price: high to low</option>
+                <option value="discount">Highest Discount</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Filter Chips -->
+        <div class="active-filters-bar hidden" id="activeFiltersBar"></div>
+
+        <!-- Product Grid (With Multi-Image Horizontal Scroll & Pink/Green Buttons) -->
+        <div class="products-grid" id="productsGrid"></div>
+
+        <!-- Load More Button -->
+        <div class="load-more-wrap" id="loadMoreWrap">
+          <button type="button" class="btn-kcb-pink btn-lg" id="loadMoreBtn">
+            আরো স্কিনকেয়ার প্রোডাক্ট দেখুন (Load More)
+          </button>
+          <p class="pagination-progress" id="paginationProgressText"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Our Uniqueness Section (KC Bazar Style Checkmarks) -->
+    <section class="uniqueness-section">
+      <div class="container">
+        <div class="kcb-section-head centered">
+          <h2 class="kcb-section-title">Our Uniqueness — <span id="uniquenessStoreName">Korean Mart Care</span></h2>
+          <p class="kcb-section-sub">গ্রাহক এবং আমাদের মাঝে কোনো মধ্যস্বত্বভোগী নেই — ১০০% অরিজিনাল কোরিয়ান স্কিনকেয়ার</p>
+        </div>
+        <div class="uniqueness-grid">
+          <div class="uniqueness-card">
+            <h3>✅ সরাসরি দক্ষিণ কোরিয়া থেকে আমদানিকৃত</h3>
+            <p>আমরা কোনো প্রোডাক্ট লোকাল সোর্সিং করি না। সরাসরি দক্ষিণ কোরিয়া থেকে আমদানিকৃত ১০০% অথেনটিক স্কিনকেয়ার সরবরাহ করি।</p>
+          </div>
+          <div class="uniqueness-card">
+            <h3>✅ কৃত্রিমভাবে মূল্য বৃদ্ধি করি না</h3>
+            <p>সততা আমাদের ব্যবসায়ের মূল ভিত্তি। তাই কৃত্রিমভাবে রেগুলার প্রাইস বাড়িয়ে ডিসকাউন্ট তৈরি করা হয় না।</p>
+          </div>
+          <div class="uniqueness-card">
+            <h3 id="uniquenessDeliveryHeading">✅ সারা বাংলাদেশে ১১০ টাকায় হোম ডেলিভারি</h3>
+            <p id="uniquenessDeliveryDesc">অর্ডারের ২৪ ঘণ্টার মধ্যে ফোন কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মধ্যে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা)।</p>
+          </div>
+          <div class="uniqueness-card">
+            <h3>✅ ডেলিভারি ম্যানের সামনে চেক করার সুবিধা</h3>
+            <p>পণ্য অর্ডারের সময় কোনো অগ্রিম চার্জ নিচ্ছি না। ডেলিভারি ম্যানের সামনেই পণ্য খুলে চেক করে রিসিভ করতে পারবেন।</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== CONTROL APP (ADMIN PANEL) VIEW ==================== -->
+  <section id="controlAppView" class="control-app-view hidden">
+    <div class="admin-app-shell container">
+      <div class="admin-topbar">
+        <div class="admin-topbar-left">
+          <div class="admin-app-icon">📱</div>
+          <div>
+            <div class="admin-badge-row">
+              <span class="live-sync-dot"></span>
+              <span class="admin-mode-tag" id="cloudSyncStatusBadge">LIVE CONTROL APP • AUTO SYNC ACTIVE</span>
+            </div>
+            <h1 class="admin-app-title"><span id="adminHeaderSiteName">Korean Mart Care</span> — Control App</h1>
+            <p class="admin-app-sub">ওয়েবসাইটের লোগো, প্রোডাক্টের দাম, ছবি আপলোড/ডিলিট, অর্ডার এবং সব সেটিংস এখান থেকে নিয়ন্ত্রণ করুন।</p>
+          </div>
+        </div>
+        <div class="admin-topbar-right">
+          <button type="button" class="btn-kcb-green" id="adminAddNewProductBtn">
+            + নতুন প্রোডাক্ট যোগ করুন
+          </button>
+          <button type="button" class="btn-kcb-outline" id="backToStorefrontBtn" style="background:#fff;">
+            ← ওয়েবসাইটে ফিরে যান
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Stats Row -->
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+          <span class="stat-label">মোট স্কিনকেয়ার প্রোডাক্ট</span>
+          <strong class="stat-value" id="statTotalProducts">460</strong>
+          <span class="stat-meta">Only Skin Care from KC Bazar</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="stat-label">মোট ব্র্যান্ড কালেকশন</span>
+          <strong class="stat-value" id="statTotalBrands">82</strong>
+          <span class="stat-meta">Korean Authentic Brands</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="stat-label">ডেলিভারি চার্জ (এডিটেবল)</span>
+          <strong class="stat-value" id="statDeliveryCharge">৳ 110</strong>
+          <span class="stat-meta">No Free Delivery Text Shown</span>
+        </div>
+        <div class="admin-stat-card">
+          <span class="stat-label">কাস্টমার অর্ডার</span>
+          <strong class="stat-value" id="statTotalOrders">0</strong>
+          <span class="stat-meta">WhatsApp + Website Orders</span>
+        </div>
+      </div>
+
+      <!-- Control App Navigation Tabs -->
+      <div class="admin-tabs-bar" role="tablist">
+        <button type="button" class="admin-tab-btn active" data-admin-tab="products">
+          📦 প্রোডাক্ট, দাম ও ছবি কন্ট্রোল
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="branding">
+          🎨 লোগো আপলোড ও সাইট সেটিংস
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="kcbazar">
+          🔄 KC Bazar লাইভ ইমপোর্ট
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="brands">
+          🏷️ ব্র্যান্ড কালেকশন কন্ট্রোল
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="orders">
+          🧾 অর্ডার লিস্ট (<span id="adminTabOrderCount">0</span>)
+        </button>
+        <button type="button" class="admin-tab-btn" data-admin-tab="cloud">
+          ☁️ ক্লাউড সিঙ্ক ও Netlify
+        </button>
+      </div>
+
+      <!-- TAB 1: PRODUCTS, PRICES & PHOTOS CONTROL -->
+      <div class="admin-tab-panel" id="adminPanelProducts">
+        <div class="admin-panel-card">
+          <div class="admin-panel-header">
+            <div>
+              <h2>প্রোডাক্টের দাম, ছবি আপলোড/ডিলিট ও বিবরণ কন্ট্রোল</h2>
+              <p>যেকোনো প্রোডাক্টের দাম পরিবর্তন করুন, নতুন ছবি আপলোড করুন, আগের ছবি ডিলিট করুন বা প্রোডাক্ট এডিট করুন।</p>
+            </div>
+            <div class="admin-filter-row">
+              <input
+                type="search"
+                id="adminProductSearch"
+                class="admin-input"
+                placeholder="প্রোডাক্টের নাম, ব্র্যান্ড বা SKU দিয়ে খুঁজুন..."
+              />
+              <select id="adminBrandFilter" class="admin-select">
+                <option value="all">সব ব্র্যান্ড</option>
+              </select>
+              <select id="adminCategoryFilter" class="admin-select">
+                <option value="all">সব ক্যাটাগরি</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-products-list" id="adminProductsList"></div>
+
+          <div class="admin-list-footer" style="margin-top:16px; text-align:center;">
+            <button type="button" class="btn-kcb-pink" id="adminLoadMoreProductsBtn">
+              আরো প্রোডাক্ট লোড করুন
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LOGO UPLOAD & SITE SETTINGS -->
+      <div class="admin-tab-panel hidden" id="adminPanelBranding">
+        <div class="admin-two-col">
+          <div class="admin-panel-card">
+            <h2>🖼️ ওয়েবসাইটের লোগো আপলোড ও পরিবর্তন</h2>
+            <p class="panel-subtext">আপনার পেজ <strong>Korean Mart Care</strong>-এর লোগো মোবাইল বা কম্পিউটার থেকে আপলোড করুন অথবা ডিলিট করে ডিফল্ট লোগো রাখুন।</p>
+
+            <div class="logo-manager-box">
+              <div class="current-logo-preview" id="adminLogoPreviewBox">
+                <img id="adminLogoPreviewImg" src="" alt="Logo Preview" class="hidden" />
+                <div id="adminLogoDefaultPlaceholder" class="logo-placeholder-text">
+                  <span>✨ Default Korean Mart Care Logo Active</span>
+                </div>
+              </div>
+
+              <div class="logo-upload-controls">
+                <label class="btn-kcb-pink file-upload-label">
+                  <input type="file" id="logoFileInput" accept="image/*" hidden />
+                  📤 গ্যালারি থেকে লোগো আপলোড করুন
+                </label>
+                <button type="button" class="btn-kcb-outline" id="removeLogoBtn">
+                  🗑️ লোগো ডিলিট / রিসেট করুন
+                </button>
+              </div>
+
+              <div class="form-group" style="margin-top: 14px;">
+                <label>অথবা সরাসরি লোগো Image URL দিন:</label>
+                <div class="input-with-btn">
+                  <input type="url" id="logoUrlInput" class="admin-input" placeholder="https://example.com/logo.png" />
+                  <button type="button" class="btn-kcb-green" id="applyLogoUrlBtn">Apply URL</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="admin-panel-card">
+            <h2>⚙️ পেজ নাম, ডেলিভারি চার্জ ও WhatsApp অর্ডার সেটিংস</h2>
+            <form id="siteSettingsForm" class="admin-form">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>পেজের নাম (Website / Page Name)</label>
+                  <input type="text" id="settingSiteName" class="admin-input" value="Korean Mart Care" required />
+                </div>
+                <div class="form-group">
+                  <label>ট্যাগলাইন (Tagline)</label>
+                  <input type="text" id="settingTagline" class="admin-input" value="100% Authentic Korean Skincare in Bangladesh" />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>🚚 ডেলিভারি চার্জ (টাকা) — ফ্রি ডেলিভারি লেখার পরিবর্তে এটি দেখাবে</label>
+                  <input type="number" id="settingDeliveryCharge" class="admin-input" value="110" min="0" required />
+                </div>
+                <div class="form-group">
+                  <label>🟢 WhatsApp অর্ডার নাম্বার (Country Code সহ, যেমন: 88017...)</label>
+                  <input type="text" id="settingWhatsappNumber" class="admin-input" placeholder="8801700000000" required />
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>🔵 Facebook Messenger পেজ লিংক</label>
+                  <input type="text" id="settingMessengerLink" class="admin-input" placeholder="https://m.me/KoreanMartCare" />
+                </div>
+                <div class="form-group">
+                  <label>📞 কাস্টমার সাপোর্ট ফোন নাম্বার</label>
+                  <input type="text" id="settingSupportPhone" class="admin-input" placeholder="+880 1700-000000" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>📢 টপ নোটিশ বার টেক্সট (Announcement Marquee)</label>
+                <input type="text" id="settingAnnouncementText" class="admin-input" />
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>হিরো টাইটেল (Hero Heading)</label>
+                  <input type="text" id="settingHeroTitle" class="admin-input" />
+                </div>
+                <div class="form-group">
+                  <label>হিরো সাবটাইটেল (Hero Subtitle)</label>
+                  <input type="text" id="settingHeroSubtitle" class="admin-input" />
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-kcb-pink btn-lg">💾 সব সেটিংস সেভ ও আপডেট করুন</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: KC BAZAR LIVE IMPORT / AUTO-SYNC -->
+      <div class="admin-tab-panel hidden" id="adminPanelKcbazar">
+        <div class="admin-panel-card" style="border: 2px solid var(--kcb-green); background: var(--kcb-green-soft); margin-bottom: 18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2>🟢 KC Bazar Live Auto-Sync (স্বয়ংক্রিয় প্রোডাক্ট, স্টক ও দাম আপডেট)</h2>
+              <p class="panel-subtext" style="margin-top:4px;">
+                KC Bazar ওয়েবসাইটে নতুন কোনো <strong>Skin Care</strong> প্রোডাক্ট যোগ হলে বা দাম/স্টক পরিবর্তন হলে আপনার ওয়েবসাইটে সেটি <strong>স্বয়ংক্রিয়ভাবে আপডেট হবে</strong> (আপনার ম্যানুয়ালি এডিট করা দাম ও ১১০ টাকা ডেলিভারি চার্জ অক্ষুণ্ণ রেখে)। এছাড়া GitHub Actions প্রতি ৬ ঘণ্টায় অটোমেটিক পুরো ক্যাটালগ আপডেট রাখবে!
+              </p>
+              <div id="kcbAutoSyncStatusText" style="margin-top:8px; font-size:0.84rem; font-weight:700; color:var(--kcb-pink);">
+                ✅ Auto-Sync স্ট্যাটাস: চালু আছে (Connected to kcbazar.com Skin Care API)
+              </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+              <label style="display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:0.88rem; background:#fff; padding:8px 12px; border-radius:6px; border:1px solid var(--border-medium); cursor:pointer;">
+                <input type="checkbox" id="toggleKcbAutoSyncCheckbox" checked />
+                Auto-Sync চালু রাখুন
+              </label>
+              <button type="button" class="btn-kcb-pink" id="runFullKcbAutoSyncBtn">
+                🔄 এখনই সব নতুন প্রোডাক্ট ও দাম অটো-সিঙ্ক করুন
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-panel-card">
+          <h2>🔄 নির্দিষ্ট প্রোডাক্ট লিংক বা সার্চ দিয়ে ইমপোর্ট করুন</h2>
+          <p class="panel-subtext">
+            KC Bazar-এর যেকোনো স্কিনকেয়ার প্রোডাক্টের লিংক পেস্ট করে <strong>⚡ KC Bazar থেকে আনুন</strong> বাটনে ক্লিক করলেই অটোমেটিক সব ছবি, দাম, ব্র্যান্ড ও ডেসক্রিপশন চলে আসবে!
+          </p>
+
+          <div class="kcbazar-import-box">
+            <div class="form-group">
+              <label>KC Bazar Product Link (URL):</label>
+              <div class="input-with-btn">
+                <input
+                  type="url"
+                  id="kcbazarUrlInput"
+                  class="admin-input"
+                  value="https://kcbazar.com/product/beauty-of-joseon-matte-sun-stick/"
+                  placeholder="https://kcbazar.com/product/..."
+                />
+                <button type="button" class="btn-kcb-pink" id="fetchKcBazarUrlBtn">
+                  ⚡ KC Bazar থেকে আনুন
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 16px;">
+              <label>অথবা KC Bazar-এ নাম/ব্র্যান্ড লিখে সার্চ করে ইমপোর্ট করুন:</label>
+              <div class="input-with-btn">
+                <input
+                  type="text"
+                  id="kcbazarLiveSearchInput"
+                  class="admin-input"
+                  placeholder="যেমন: Beauty of Joseon, Cosrx Snail, Anua, Sunscreen..."
+                />
+                <button type="button" class="btn-kcb-green" id="searchKcBazarLiveBtn">
+                  🔍 Live Search on KC Bazar
+                </button>
+              </div>
+            </div>
+
+            <div id="kcbazarImportResults" class="kcbazar-import-results"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: BRAND COLLECTION CONTROL -->
+      <div class="admin-tab-panel hidden" id="adminPanelBrands">
+        <div class="admin-panel-card">
+          <div class="admin-panel-header">
+            <div>
+              <h2>🏷️ ব্র্যান্ড কালেকশন কন্ট্রোল</h2>
+              <p>ব্র্যান্ডের লোগো/ছবি পরিবর্তন করুন বা নতুন ব্র্যান্ড যোগ করুন।</p>
+            </div>
+            <button type="button" class="btn-kcb-pink" id="addNewBrandBtn">+ নতুন ব্র্যান্ড যোগ করুন</button>
+          </div>
+          <div class="admin-brands-grid" id="adminBrandsGrid"></div>
+        </div>
+      </div>
+
+      <!-- TAB 5: ORDERS LIST -->
+      <div class="admin-tab-panel hidden" id="adminPanelOrders">
+        <div class="admin-panel-card">
+          <div class="admin-panel-header">
+            <div>
+              <h2>🧾 কাস্টমার অর্ডার ম্যানেজমেন্ট</h2>
+              <p>ওয়েবসাইটে করা সকল অর্ডার এখানে জমা থাকে এবং এক ক্লিকে কাস্টমারের সাথে WhatsApp-এ কথা বলতে পারবেন।</p>
+            </div>
+            <button type="button" class="btn-kcb-outline" id="clearAllOrdersBtn">সব অর্ডার ক্লিয়ার করুন</button>
+          </div>
+          <div id="adminOrdersContainer" class="admin-orders-container"></div>
+        </div>
+      </div>
+
+      <!-- TAB 6: CLOUD SYNC & GITHUB / NETLIFY DEPLOY -->
+      <div class="admin-tab-panel hidden" id="adminPanelCloud">
+        <div class="admin-panel-card" style="border: 2px solid var(--kcb-pink); margin-bottom: 18px;">
+          <h2>🐙 GitHub Repository Direct Sync (GitHub + Netlify অটো সিঙ্ক)</h2>
+          <p class="panel-subtext">
+            আপনার ওয়েবসাইটের কোড যে <strong>GitHub Repository</strong>-তে রাখবেন (যা Netlify-এর সাথে কানেক্টেড), তার নাম ও Token এখানে একবার দিয়ে সেভ করে রাখুন। এরপর আপনি মোবাইল অ্যাপ (APK) বা ব্রাউজার থেকে যখনই কোনো প্রোডাক্টের দাম, ছবি বা লোগো পরিবর্তন করবেন, সেটি <strong>অটোমেটিক আপনার GitHub Repo ও Netlify ওয়েবসাইটে লাইভ আপডেট হয়ে যাবে!</strong>
+          </p>
+          <div class="form-row-3" style="margin-top: 12px;">
+            <div class="form-group">
+              <label>GitHub Repo (যেমন: neetu27886/korean-mart-care):</label>
+              <input type="text" id="githubRepoInput" class="admin-input" value="neetu27886/korean-mart-care" placeholder="neetu27886/korean-mart-care" />
+            </div>
+            <div class="form-group">
+              <label>Branch Name (ডিফল্ট: main):</label>
+              <input type="text" id="githubBranchInput" class="admin-input" value="main" placeholder="main" />
+            </div>
+            <div class="form-group">
+              <label>GitHub Personal Access Token (ghp_...):</label>
+              <input type="password" id="githubTokenInput" class="admin-input" placeholder="ghp_xxxxxxxxxxxx" />
+            </div>
+          </div>
+          <div class="form-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn-kcb-green" id="deployFullSiteToGithubBtn" style="font-size:0.95rem; padding:11px 18px;">
+              🚀 ১-ক্লিকে পুরো ওয়েবসাইট GitHub-এ অটো-আপলোড করুন (Fix Netlify Deploy)
+            </button>
+            <button type="button" class="btn-kcb-pink" id="saveGithubSyncBtn">🐙 GitHub কানেক্ট ও লাইভ পুশ করুন</button>
+            <button type="button" class="btn-kcb-outline" id="pullFromGithubBtn">🔄 GitHub থেকে লেটেস্ট ডাটা আনুন</button>
+          </div>
+          <div id="githubDeployProgressText" style="margin-top:10px; font-size:0.86rem; font-weight:700; color:var(--kcb-pink);"></div>
+        </div>
+
+        <div class="admin-two-col">
+          <div class="admin-panel-card">
+            <h2>☁️ বিকল্প ক্লাউড সিঙ্ক (JSONBin.io / Custom REST URL)</h2>
+            <p class="panel-subtext">
+              GitHub ছাড়াও আপনি চাইলে ফ্রি <strong>JSONBin.io</strong> বা যেকোনো Cloud JSON Endpoint অথবা আপনার লাইভ সাইটের URL যুক্ত করতে পারেন।
+            </p>
+            <div class="form-group">
+              <label>Cloud Sync JSONBin URL বা আপনার Live Netlify Site URL (Optional):</label>
+              <input type="text" id="cloudBinUrlInput" class="admin-input" placeholder="https://api.jsonbin.io/v3/b/YOUR_BIN_ID অথবা https://your-site.netlify.app/api/store" />
+            </div>
+            <div class="form-group">
+              <label>Cloud API Key / X-Master-Key (Optional):</label>
+              <input type="password" id="cloudApiKeyInput" class="admin-input" placeholder="$2a$10$..." />
+            </div>
+            <div class="form-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="button" class="btn-kcb-pink" id="saveCloudConfigBtn">☁️ ক্লাউড সিঙ্ক সেভ ও সিঙ্ক করুন</button>
+              <button type="button" class="btn-kcb-green" id="pullFromCloudBtn">🔄 ক্লাউড থেকে লেটেস্ট ডাটা আনুন</button>
+            </div>
+          </div>
+
+          <div class="admin-panel-card">
+            <h2>🚀 ডাটা ব্যাকআপ ও রিস্টোর</h2>
+            <p class="panel-subtext">আপনি অ্যাপ থেকে যেসব পরিবর্তন করেছেন তার সম্পূর্ণ ব্যাকআপ JSON ফাইল ডাউনলোড বা রিস্টোর করতে পারেন।</p>
+            <div class="form-actions" style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px;">
+              <button type="button" class="btn-kcb-pink" id="exportFullStoreJsonBtn">📥 ব্যাকআপ ডাটা ডাউনলোড (.json)</button>
+              <label class="btn-kcb-green file-upload-label">
+                <input type="file" id="importStoreJsonInput" accept=".json" hidden />
+                📤 ডাটা ফাইল ইমপোর্ট করুন
+              </label>
+              <button type="button" class="btn-kcb-outline" id="resetAllOverridesBtn">♻️ ডিফল্ট অবস্থায় রিসেট করুন</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PRODUCT DETAIL MODAL (EXACT KC BAZAR LAYOUT FROM IMG_7790.png) ==================== -->
+  <div id="productDetailModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-container product-detail-modal-box">
+      <button type="button" class="modal-close-btn" id="closeProductDetailModal" aria-label="Close product details">✕</button>
+      <div id="productDetailModalBody" class="product-detail-body"></div>
+    </div>
+  </div>
+
+  <!-- ==================== ADMIN PRODUCT & PHOTO EDITOR MODAL ==================== -->
+  <div id="adminEditProductModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-container admin-edit-modal-box">
+      <div class="modal-header">
+        <h3 id="adminEditModalTitle">✏️ প্রোডাক্ট, দাম ও ছবি এডিট করুন</h3>
+        <button type="button" class="modal-close-btn" id="closeAdminEditModal">✕</button>
+      </div>
+      <form id="adminProductEditForm" class="admin-edit-form">
+        <input type="hidden" id="editProdId" />
+
+        <div class="photo-manager-section">
+          <div class="photo-manager-header">
+            <div>
+              <h4>📸 প্রোডাক্টের ছবি কন্ট্রোল (একের অধিক ছবি থাকলে ওয়েবসাইটে স্ক্রল অপশন আসবে)</h4>
+              <p>যেকোনো ছবি ডিলিট করতে <strong>🗑️ Delete</strong> বাটনে ক্লিক করুন অথবা নতুন ছবি আপলোড করুন।</p>
+            </div>
+            <label class="btn-kcb-pink file-upload-label">
+              <input type="file" id="editProdPhotoUpload" accept="image/*" multiple hidden />
+              📤 নতুন ছবি আপলোড করুন (একাধিক)
+            </label>
+          </div>
+
+          <div id="editProdImagesList" class="edit-prod-images-grid"></div>
+
+          <div class="input-with-btn" style="margin-top: 10px;">
+            <input type="url" id="editProdNewImageUrl" class="admin-input" placeholder="অথবা ছবির সরাসরি লিংক (Image URL) পেস্ট করে যোগ করুন..." />
+            <button type="button" class="btn-kcb-green" id="addImageByUrlBtn">+ ছবি যোগ করুন</button>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>প্রোডাক্টের নাম (Product Name) *</label>
+            <input type="text" id="editProdName" class="admin-input" required />
+          </div>
+          <div class="form-group">
+            <label>ব্র্যান্ড (Brand Name) *</label>
+            <input type="text" id="editProdBrand" class="admin-input" list="brandSuggestionsList" required />
+            <datalist id="brandSuggestionsList"></datalist>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>অফার/বিক্রয় মূল্য (Sale Price ৳) *</label>
+            <input type="number" id="editProdSalePrice" class="admin-input" min="1" required />
+          </div>
+          <div class="form-group">
+            <label>রেগুলার মূল্য (Regular Price ৳)</label>
+            <input type="number" id="editProdRegularPrice" class="admin-input" min="1" required />
+          </div>
+          <div class="form-group">
+            <label>স্টক স্ট্যাটাস (Stock Status)</label>
+            <select id="editProdInStock" class="admin-select">
+              <option value="true">✅ In Stock (স্টকে আছে)</option>
+              <option value="false">❌ Out of Stock (স্টক আউট)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>স্কিনকেয়ার ক্যাটাগরি (Category)</label>
+            <input type="text" id="editProdCategory" class="admin-input" placeholder="Sunscreen, Cleanser, Serum..." />
+          </div>
+          <div class="form-group">
+            <label>ওজন / পরিমাণ (Weight / Volume)</label>
+            <input type="text" id="editProdWeight" class="admin-input" placeholder="18 g, 50 ml, 100 ml" />
+          </div>
+          <div class="form-group">
+            <label>SKU / বারকোড</label>
+            <input type="text" id="editProdSku" class="admin-input" placeholder="8809..." />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>প্রোডাক্টের বিবরণ (Product Description)</label>
+          <textarea id="editProdDescription" class="admin-textarea" rows="6"></textarea>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn-kcb-outline" id="deleteProductFromModalBtn">🗑️ প্রোডাক্ট ডিলিট করুন</button>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-kcb-outline" id="cancelAdminEditBtn">বাতিল</button>
+            <button type="submit" class="btn-kcb-pink">💾 পরিবর্তন সেভ করুন</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== ALL BRANDS MODAL ==================== -->
+  <div id="allBrandsModal" class="modal-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="modal-container brands-modal-box">
+      <div class="modal-header">
+        <div>
+          <h3>🇰🇷 Korean Skincare Brand Collection</h3>
+          <p class="modal-sub">যেকোনো ব্র্যান্ডে ক্লিক করলে সেই ব্র্যান্ডের সকল স্কিনকেয়ার প্রোডাক্ট দেখতে পাবেন</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeAllBrandsModal">✕</button>
+      </div>
+      <div class="brands-modal-search">
+        <input type="search" id="brandModalSearchInput" class="admin-input" placeholder="ব্র্যান্ডের নাম খুঁজুন (যেমন: Beauty of Joseon, CosRx, SKIN1004, Dabo)..." />
+      </div>
+      <div id="allBrandsModalGrid" class="all-brands-modal-grid"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SHOPPING CART & ORDER CHECKOUT DRAWER ==================== -->
+  <div id="cartDrawerBackdrop" class="drawer-backdrop hidden">
+    <aside class="cart-drawer">
+      <div class="drawer-header">
+        <div>
+          <h3 id="cartDrawerTitle">🛍️ Shopping Cart & Order</h3>
+          <p class="drawer-sub">Delivery Charge: ৳<span id="drawerDeliveryChargeText">110</span> (All Bangladesh)</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeCartDrawerBtn">✕</button>
+      </div>
+
+      <div class="drawer-body" id="cartDrawerBody">
+        <div id="cartItemsList" class="cart-items-list"></div>
+
+        <form id="checkoutOrderForm" class="checkout-form">
+          <h4 class="checkout-form-title">📍 ডেলিভারি ও অর্ডার তথ্য দিন</h4>
+
+          <div class="form-group">
+            <label>আপনার নাম (Full Name) *</label>
+            <input type="text" id="orderCustomerName" class="admin-input" placeholder="আপনার পূর্ণ নাম লিখুন" required />
+          </div>
+
+          <div class="form-group">
+            <label>মোবাইল নাম্বার (Phone Number) *</label>
+            <input type="tel" id="orderCustomerPhone" class="admin-input" placeholder="017XXXXXXXX" required />
+          </div>
+
+          <div class="form-group">
+            <label>সম্পূর্ণ ঠিকানা (জেলা, থানা ও বাসার ঠিকানা) *</label>
+            <textarea id="orderCustomerAddress" class="admin-input" rows="2" placeholder="বাসা নং, রোড, এলাকা, থানা ও জেলা লিখুন" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>অর্ডার নোট (ঐচ্ছিক)</label>
+            <input type="text" id="orderCustomerNote" class="admin-input" placeholder="বিশেষ কোনো নির্দেশনা থাকলে লিখুন..." />
+          </div>
+
+          <div class="order-summary-box">
+            <div class="summary-line">
+              <span>প্রোডাক্টের মূল্য (Subtotal):</span>
+              <strong id="checkoutSubtotal">৳ 0</strong>
+            </div>
+            <div class="summary-line">
+              <span>হোম ডেলিভারি চার্জ (Delivery Charge):</span>
+              <strong id="checkoutDeliveryFee">৳ 110</strong>
+            </div>
+            <div class="summary-line total-line">
+              <span>সর্বমোট প্রদেয় (Total Payable):</span>
+              <strong id="checkoutGrandTotal">৳ 0</strong>
+            </div>
+            <p class="cod-note">✅ পণ্য হাতে পেয়ে ডেলিভারি ম্যানের সামনে চেক করে মূল্য পরিশোধ করবেন (Cash on Delivery)।</p>
+          </div>
+
+          <div class="checkout-buttons-stack">
+            <button type="submit" class="btn-kcb-green btn-block" style="padding:13px;">
+              🟢 WhatsApp-এ অর্ডার কনফার্ম করুন
+            </button>
+            <button type="button" id="orderViaMessengerBtn" class="btn-kcb-messenger btn-block">
+              🔵 Messenger-এ অর্ডার মেসেজ পাঠান
+            </button>
+            <button type="button" id="orderDirectWebsiteBtn" class="btn-kcb-pink btn-block">
+              🛍️ ওয়েবসাইটে অর্ডার প্লেস করুন
+            </button>
+          </div>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-col brand-col">
+        <strong class="footer-brand-name" id="footerSiteName">Korean Mart Care</strong>
+        <p class="footer-about">
+          দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অথেনটিক স্কিনকেয়ার প্রোডাক্টের বিশ্বস্ত প্রতিষ্ঠান। আমরা শুধুমাত্র অরিজিনাল কোরিয়ান স্কিনকেয়ার সরবরাহ করি।
+        </p>
+        <div class="footer-contact-list">
+          <div>📞 হটলাইন: <span id="footerSupportPhone">+880 1700-000000</span></div>
+          <div>🚚 ডেলিভারি চার্জ: <strong id="footerDeliveryCharge">৳ ১১০</strong> (সারা বাংলাদেশে হোম ডেলিভারি)</div>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>জনপ্রিয় কোরিয়ান ব্র্যান্ড</h4>
+        <ul class="footer-links" id="footerBrandsList"></ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>স্কিনকেয়ার ক্যাটাগরি</h4>
+        <ul class="footer-links" id="footerCategoriesList"></ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>কাস্টমার সেবা</h4>
+        <ul class="footer-links">
+          <li><a href="#catalogSection">সকল স্কিনকেয়ার প্রোডাক্ট</a></li>
+          <li><a href="#brandCollectionSection">কোরিয়ান ব্র্যান্ড কালেকশন</a></li>
+          <li><button type="button" class="footer-link-btn" id="footerOpenCartBtn">শপিং কার্ট ও চেকআউট</button></li>
+          <li><button type="button" class="footer-link-btn" id="footerOpenAdminBtn">📱 Korean Mart Care Control App</button></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <p>© 2026 <strong id="footerCopyName">Korean Mart Care</strong>. All Rights Reserved. 100% Authentic Korean Skincare.</p>
+    </div>
+  </footer>
+
+  <!-- Floating Scroll-to-Top Circle Button (Exact Match to IMG_7790.png) -->
+  <a href="#top" class="kcb-scroll-top-btn" aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </a>
+
+  <!-- ==================== STICKY 5-ITEM BOTTOM NAVIGATION BAR (EXACT MATCH TO IMG_7790.png) ==================== -->
+  <nav class="kcb-bottom-navbar" aria-label="Bottom quick bar">
+    <button type="button" class="kcb-bot-item" id="botNavWhatsapp">
+      <span class="kcb-bot-icon whatsapp-circle">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.82 14.01c-.24.68-1.41 1.3-1.95 1.38-.51.08-1.15.11-1.86-.12-.43-.14-.98-.32-1.69-.63-2.97-1.28-4.91-4.28-5.06-4.48-.15-.2-1.21-1.61-1.21-3.07 0-1.46.76-2.18 1.03-2.48.27-.3.59-.37.79-.37.2 0 .4 0 .57.01.18.01.43-.07.67.51.24.58.82 2 .89 2.15.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.45.52-.15.15-.3.31-.13.61.17.3.76 1.25 1.63 2.03 1.12 1 2.06 1.31 2.36 1.46.3.15.47.12.65-.07.17-.2.74-.86.94-1.16.2-.3.4-.25.67-.15.27.1 1.73.82 2.03.97.3.15.5.22.57.35.08.12.08.72-.16 1.4z"/>
+        </svg>
+      </span>
+      <span class="kcb-bot-label">WhatsApp</span>
+    </button>
+
+    <button type="button" class="kcb-bot-item" id="botNavMessenger">
+      <span class="kcb-bot-icon messenger-circle">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.14 2 11.25c0 2.91 1.45 5.51 3.72 7.21V22l3.4-1.87c.9.25 1.87.38 2.88.38 5.52 0 10-4.14 10-9.25S17.52 2 12 2zm1.08 12.42l-2.55-2.72-4.97 2.72 5.47-5.81 2.61 2.72 4.91-2.72-5.47 5.81z"/>
+        </svg>
+      </span>
+      <span class="kcb-bot-label">Messenger</span>
+    </button>
+
+    <button type="button" class="kcb-bot-item" id="botNavCart">
+      <span class="kcb-bot-icon cart-outline-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+        </svg>
+        <b class="bot-cart-badge" id="mobCartCount">0</b>
+      </span>
+      <span class="kcb-bot-label">Cart</span>
+    </button>
+
+    <button type="button" class="kcb-bot-item" id="botNavAccount">
+      <span class="kcb-bot-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </span>
+      <span class="kcb-bot-label">My account</span>
+    </button>
+
+    <button type="button" class="kcb-bot-item" id="botNavMenu">
+      <span class="kcb-bot-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </span>
+      <span class="kcb-bot-label">Menu</span>
+    </button>
+  </nav>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -346,6 +346,139 @@ app.all('/api/kcbazar-auto-sync', async (req, res) => {
   }
 });
 
+// POST 1-Click Full Project Upload to GitHub Repository (for Mobile/iPhone users)
+app.post('/api/github-full-deploy', async (req, res) => {
+  try {
+    let { repo, branch = 'main', token } = req.body || {};
+    if (!repo || !token) {
+      return res.status(400).json({ error: 'GitHub Repo এবং Token দিতে হবে।' });
+    }
+    repo = String(repo).trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\.git$/i, '').replace(/\/+$/, '');
+
+    const ghHeaders = {
+      Accept: 'application/vnd.github.v3+json',
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'User-Agent': 'KoreanMartCare-AutoDeployer'
+    };
+
+    const filesToUpload = [
+      'netlify.toml',
+      'package.json',
+      'server.js',
+      'scripts/sync-kcbazar.js',
+      'netlify/functions/api.js',
+      'public/index.html',
+      'public/styles.css',
+      'public/app.js',
+      'public/manifest.json',
+      'public/data/store-state.json',
+      'public/data/catalog.json'
+    ];
+
+    // Check if repo is completely empty; if so, initialize with README.md via Contents API first
+    let refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, { headers: ghHeaders });
+    if (refRes.status === 404 || refRes.status === 409) {
+      await fetch(`https://api.github.com/repos/${repo}/contents/README.md`, {
+        method: 'PUT',
+        headers: ghHeaders,
+        body: JSON.stringify({
+          message: 'Initialize Korean Mart Care repository',
+          content: Buffer.from('# Korean Mart Care — Authentic Korean Skincare\n').toString('base64'),
+          branch
+        })
+      });
+      refRes = await fetch(`https://api.github.com/repos/${repo}/git/ref/heads/${branch}`, { headers: ghHeaders });
+    }
+
+    if (!refRes.ok) {
+      const errTxt = await refRes.text();
+      return res.status(refRes.status).json({ error: `GitHub অ্যাক্সেস ত্রুটি: ${errTxt}` });
+    }
+
+    const refData = await refRes.json();
+    const latestCommitSha = refData.object.sha;
+
+    const commitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits/${latestCommitSha}`, { headers: ghHeaders });
+    const commitData = await commitRes.json();
+    const baseTreeSha = commitData.tree.sha;
+
+    // Create blobs for each file
+    const treeItems = [];
+    for (const relPath of filesToUpload) {
+      const absPath = path.join(__dirname, relPath);
+      if (!fs.existsSync(absPath)) continue;
+      let fileContent = fs.readFileSync(absPath, 'utf8');
+
+      // Hide admin quickbar for customer website unless ?app=admin
+      if (relPath === 'public/styles.css') {
+        fileContent += '\nbody:not(.admin-unlocked) #toggleControlAppBtn, body:not(.admin-unlocked) .card-admin-quickbar, body:not(.admin-unlocked) #footerOpenAdminBtn { display: none !important; }\n';
+      }
+
+      const blobRes = await fetch(`https://api.github.com/repos/${repo}/git/blobs`, {
+        method: 'POST',
+        headers: ghHeaders,
+        body: JSON.stringify({
+          content: Buffer.from(fileContent, 'utf8').toString('base64'),
+          encoding: 'base64'
+        })
+      });
+      if (!blobRes.ok) {
+        const bErr = await blobRes.text();
+        throw new Error(`Blob upload failed for ${relPath}: ${bErr}`);
+      }
+      const blobData = await blobRes.json();
+      treeItems.push({
+        path: relPath,
+        mode: '100644',
+        type: 'blob',
+        sha: blobData.sha
+      });
+    }
+
+    // Create a new tree
+    const newTreeRes = await fetch(`https://api.github.com/repos/${repo}/git/trees`, {
+      method: 'POST',
+      headers: ghHeaders,
+      body: JSON.stringify({
+        base_tree: baseTreeSha,
+        tree: treeItems
+      })
+    });
+    if (!newTreeRes.ok) throw new Error('Failed to create GitHub tree');
+    const newTreeData = await newTreeRes.json();
+
+    // Create commit
+    const newCommitRes = await fetch(`https://api.github.com/repos/${repo}/git/commits`, {
+      method: 'POST',
+      headers: ghHeaders,
+      body: JSON.stringify({
+        message: '🚀 Deploy complete Korean Mart Care Website & Auto-Sync Engine',
+        tree: newTreeData.sha,
+        parents: [latestCommitSha]
+      })
+    });
+    if (!newCommitRes.ok) throw new Error('Failed to create GitHub commit');
+    const newCommitData = await newCommitRes.json();
+
+    // Update branch reference
+    const updateRefRes = await fetch(`https://api.github.com/repos/${repo}/git/refs/heads/${branch}`, {
+      method: 'PATCH',
+      headers: ghHeaders,
+      body: JSON.stringify({
+        sha: newCommitData.sha,
+        force: true
+      })
+    });
+    if (!updateRefRes.ok) throw new Error('Failed to update GitHub branch ref');
+
+    res.json({ status: 'ok', commitSha: newCommitData.sha, uploadedFiles: treeItems.length });
+  } catch (err) {
+    console.error('GitHub Full Deploy Error:', err);
+    res.status(500).json({ error: err.message || 'GitHub-এ পুরো প্রজেক্ট আপলোড করতে সমস্যা হয়েছে।' });
+  }
+});
+
 // Serve static frontend from public/
 app.use(express.static(path.join(__dirname, 'public')));
 

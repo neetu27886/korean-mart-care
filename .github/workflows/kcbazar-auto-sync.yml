@@ -1,0 +1,37 @@
+name: KC Bazar Skin Care Auto-Sync
+
+on:
+  schedule:
+    # Runs automatically every 6 hours to fetch new Skin Care products & price updates from KC Bazar
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual 1-click run from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync-kcbazar-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch Latest Skin Care Products & Prices from KC Bazar
+        run: node scripts/sync-kcbazar.js
+
+      - name: Commit & Push Updated Catalog (Triggers Netlify Auto-Deploy)
+        run: |
+          git config user.name "Korean Mart Care Auto-Sync Bot"
+          git config user.email "autosync@koreanmartcare.com"
+          git add public/data/catalog.json
+          if git diff --staged --quiet; then
+            echo "No changes in KC Bazar Skin Care catalog."
+          else
+            git commit -m "🔄 Auto-sync latest Skin Care products & prices from KC Bazar"
+            git push
+          fi

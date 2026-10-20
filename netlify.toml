@@ -1,6 +1,10 @@
 [build]
   publish = "public"
   functions = "netlify/functions"
+  command = "node -e \"const fs=require('fs'); if(!fs.existsSync('public')){fs.mkdirSync('public',{recursive:true}); for(const f of ['index.html','styles.css','app.js','manifest.json']){if(fs.existsSync(f))fs.copyFileSync(f,'public/'+f);}}\""
+
+[functions]
+  node_bundler = "esbuild"
 
 [[redirects]]
   from = "/api/*"
