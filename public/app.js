@@ -382,12 +382,13 @@ function renderSiteBrandingAndSettings() {
 
   document.title = `${s.siteName || 'Korean Mart Care'} | ${s.tagline || '100% Authentic Korean Skincare'}`;
 
+  const annText =
+    s.announcementText ||
+    `✨ ${s.siteName || 'Korean Mart Care'} — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ৳${deliveryFee}) ✨`;
   const annPrimary = document.getElementById('announcementTextPrimary');
-  if (annPrimary) {
-    annPrimary.textContent =
-      s.announcementText ||
-      `🎉 ${s.siteName || 'Korean Mart Care'} — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | সারা বাংলাদেশে হোম ডেলিভারি চার্জ ৳${deliveryFee}`;
-  }
+  const annDup = document.getElementById('announcementTextDuplicate');
+  if (annPrimary) annPrimary.textContent = annText;
+  if (annDup) annDup.textContent = annText;
 
   const defaultSvg = document.getElementById('defaultLogoSvg');
   const customImg = document.getElementById('customLogoImg');
@@ -1615,6 +1616,8 @@ function renderAdminBrandingForm() {
   const s = AppState.storeState.settings;
   const previewImg = document.getElementById('adminLogoPreviewImg');
   const placeholder = document.getElementById('adminLogoDefaultPlaceholder');
+  const quickPreviewImg = document.getElementById('quickLogoPreviewImg');
+  const quickPlaceholder = document.getElementById('quickLogoDefaultBadge');
   const urlInput = document.getElementById('logoUrlInput');
 
   if (s.logoUrl && s.logoUrl.trim()) {
@@ -1623,10 +1626,17 @@ function renderAdminBrandingForm() {
       previewImg.classList.remove('hidden');
     }
     placeholder?.classList.add('hidden');
+    if (quickPreviewImg) {
+      quickPreviewImg.src = s.logoUrl;
+      quickPreviewImg.classList.remove('hidden');
+    }
+    quickPlaceholder?.classList.add('hidden');
     if (urlInput) urlInput.value = s.logoUrl.startsWith('data:') ? '' : s.logoUrl;
   } else {
     previewImg?.classList.add('hidden');
     placeholder?.classList.remove('hidden');
+    quickPreviewImg?.classList.add('hidden');
+    quickPlaceholder?.classList.remove('hidden');
     if (urlInput) urlInput.value = '';
   }
 
@@ -1645,8 +1655,8 @@ function renderAdminBrandingForm() {
   setVal('quickFontSizeSelect', s.fontSize || '100%');
   setVal('settingInstagramLink', s.instagramLink || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr');
   setVal('settingMessengerLink', s.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr');
-  setVal('settingSupportPhone', s.supportPhone || '');
   setVal('settingAnnouncementText', s.announcementText || '');
+  setVal('quickAnnouncementInput', s.announcementText || '');
   setVal('settingHeroTitle', s.heroTitle || '');
   setVal('settingHeroSubtitle', s.heroSubtitle || '');
 
@@ -2060,7 +2070,6 @@ function handleInitialUrlRouting() {
   const appMode = params.get('app');
 
   if (appMode === 'admin' || window.location.hash === '#admin') {
-    document.body.classList.add('admin-unlocked');
     toggleControlApp(true);
   }
   if (prodSlug) {
@@ -2620,7 +2629,7 @@ function bindEvents() {
     await saveStoreState('🗑️ প্রোডাক্টটি ডিলিট করা হয়েছে!');
   });
 
-  document.getElementById('logoFileInput')?.addEventListener('change', async (e) => {
+  const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -2631,7 +2640,10 @@ function bindEvents() {
     } catch (err) {
       showToast('লোগো আপলোড করতে সমস্যা হয়েছে।');
     }
-  });
+  };
+
+  document.getElementById('logoFileInput')?.addEventListener('change', handleLogoUpload);
+  document.getElementById('quickLogoFileInput')?.addEventListener('change', handleLogoUpload);
 
   document.getElementById('applyLogoUrlBtn')?.addEventListener('click', async () => {
     const url = document.getElementById('logoUrlInput')?.value.trim();
@@ -2640,10 +2652,12 @@ function bindEvents() {
     await saveStoreState('🎨 লোগো URL সফলভাবে সেট হয়েছে!');
   });
 
-  document.getElementById('removeLogoBtn')?.addEventListener('click', async () => {
+  const handleLogoRemove = async () => {
     AppState.storeState.settings.logoUrl = '';
     await saveStoreState('♻️ ডিফল্ট Korean Mart Care লোগো রিসেট করা হয়েছে!');
-  });
+  };
+  document.getElementById('removeLogoBtn')?.addEventListener('click', handleLogoRemove);
+  document.getElementById('quickRemoveLogoBtn')?.addEventListener('click', handleLogoRemove);
 
   document.getElementById('saveQuickControlsBtn')?.addEventListener('click', async () => {
     const s = AppState.storeState.settings;
@@ -2656,6 +2670,11 @@ function bindEvents() {
     const fontSz = document.getElementById('quickFontSizeSelect')?.value;
     if (fontSz) s.fontSize = fontSz;
 
+    const quickAnn = document.getElementById('quickAnnouncementInput')?.value.trim();
+    if (quickAnn) {
+      s.announcementText = quickAnn;
+    }
+
     const quickTok = document.getElementById('quickGithubTokenInput')?.value.trim();
     if (quickTok) {
       const repo = document.getElementById('githubRepoInput')?.value.trim() || 'neetu27886/korean-mart-care';
@@ -2665,7 +2684,7 @@ function bindEvents() {
       if (tokInput) tokInput.value = quickTok;
     }
 
-    await saveStoreState('✅ ফন্ট, ডেলিভারি চার্জ ও ক্লাউড সিঙ্ক সফলভাবে সেভ ও আপডেট হয়েছে!');
+    await saveStoreState('✅ লোগো, রানিং ব্যানার, ফন্ট ও ডেলিভারি চার্জ সফলভাবে সেভ ও আপডেট হয়েছে!');
   });
 
   document.querySelectorAll('[data-jump-tab]').forEach((card) => {

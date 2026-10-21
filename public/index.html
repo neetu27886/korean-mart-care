@@ -18,16 +18,22 @@
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body id="top">
-  <!-- Top Notice Marquee Bar (KC Bazar Style - No Free Delivery Text, Shows 110 Tk Delivery) -->
+  <!-- Top Live Running Pink Marquee Banner with White Text -->
   <div class="top-marquee-bar">
-    <div class="container marquee-inner">
-      <span id="announcementTextPrimary">
-        🎉 <strong>Korean Mart Care</strong> — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা)
-      </span>
+    <div class="marquee-viewport">
+      <div class="marquee-track">
+        <span class="marquee-item" id="announcementTextPrimary">
+          ✨ Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা) ✨
+        </span>
+        <span class="marquee-divider">★</span>
+        <span class="marquee-item" id="announcementTextDuplicate">
+          ✨ Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা) ✨
+        </span>
+      </div>
     </div>
   </div>
 
-  <!-- Main Sticky Header (KC Bazar Clean White Header + Rounded Search with Pink Circle Button) -->
+  <!-- Main Sticky Header with Dedicated Prominent Logo Showcase Space -->
   <header class="site-header" id="siteHeader">
     <div class="container header-main-row">
       <!-- Hamburger Menu Trigger (Opens Left Slide-Out CATEGORIES | MENU Drawer) -->
@@ -39,9 +45,9 @@
         </svg>
       </button>
 
-      <!-- Brand Identity / Logo -->
+      <!-- Dedicated Prominent Brand Logo Showcase Space -->
       <a href="#top" class="brand-identity" id="brandHomeLink">
-        <div class="brand-logo-wrap" id="headerLogoWrap">
+        <div class="brand-logo-showcase-frame" id="headerLogoWrap">
           <div class="default-kcb-logo" id="defaultLogoSvg">
             <span class="logo-pink">KOREAN</span>
             <span class="logo-dark">MART CARE</span>
@@ -50,7 +56,7 @@
         </div>
         <div class="brand-text-wrap">
           <span class="brand-title" id="headerSiteName">Korean Mart Care</span>
-          <span class="brand-subtitle" id="headerTagline">Authentic Korean Skincare</span>
+          <span class="brand-subtitle" id="headerTagline">100% Authentic Korean Skincare</span>
         </div>
       </a>
 
@@ -405,11 +411,35 @@
         </button>
       </div>
 
-      <!-- Instant Quick Control Card: Delivery Charge, Font Change & Cloud Sync -->
+      <!-- Instant Quick Control Card: Logo Upload, Delivery Charge, Font Change & Cloud Sync -->
       <div class="admin-panel-card" style="border: 2px solid var(--kcb-pink); background: #FFF8FB; margin-bottom: 16px;">
-        <h2 style="font-size:1.05rem; color:var(--kcb-pink); margin-bottom:10px;">
-          ⚡ কুইক কন্ট্রোল (ডেলিভারি চার্জ, লেখার ফন্ট চেঞ্জ ও ক্লাউড সিঙ্ক)
+        <h2 style="font-size:1.05rem; color:var(--kcb-pink); margin-bottom:12px;">
+          ⚡ কুইক কন্ট্রোল (লোগো আপলোড, ডেলিভারি চার্জ, ফন্ট চেঞ্জ ও ক্লাউড সিঙ্ক)
         </h2>
+
+        <!-- Direct Logo Upload & Preview Box Right at Top -->
+        <div style="background:#FFFFFF; border:1.5px dashed #F48FB1; border-radius:8px; padding:12px; margin-bottom:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="min-width:110px; height:52px; border:1px solid var(--border-light); border-radius:8px; background:#FFF; display:flex; align-items:center; justify-content:center; padding:4px 10px;">
+              <img id="quickLogoPreviewImg" src="" alt="Logo Preview" class="hidden" style="max-height:44px; max-width:130px; object-fit:contain;" />
+              <span id="quickLogoDefaultBadge" style="font-size:0.75rem; font-weight:800; color:var(--kcb-pink);">KOREAN MART CARE</span>
+            </div>
+            <div>
+              <strong style="font-size:0.9rem; display:block;">🖼️ ওয়েবসাইটের লোগো (Logo Upload)</strong>
+              <span style="font-size:0.76rem; color:var(--text-muted);">আপনার ফোনের গ্যালারি থেকে সরাসরি লোগো সিলেক্ট করুন</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <label class="btn-kcb-pink file-upload-label" style="padding:8px 14px; font-size:0.83rem;">
+              <input type="file" id="quickLogoFileInput" accept="image/*" hidden />
+              📤 লোগো আপলোড করুন
+            </label>
+            <button type="button" class="btn-kcb-outline" id="quickRemoveLogoBtn" style="padding:8px 12px; font-size:0.8rem;">
+              🗑️ ডিফল্ট লোগো
+            </button>
+          </div>
+        </div>
+
         <div class="form-row-3">
           <div class="form-group" style="margin-bottom:8px;">
             <label>🚚 ডেলিভারি চার্জ (টাকা):</label>
@@ -437,6 +467,11 @@
           </div>
         </div>
 
+        <div class="form-group" style="margin-bottom:8px;">
+          <label>📢 উপরের পিঙ্ক রানিং ব্যানারের লেখা (Top Running Banner Text):</label>
+          <input type="text" id="quickAnnouncementInput" class="admin-input" placeholder="উপরের রানিং ব্যানারের লেখা এখানে পরিবর্তন করুন..." />
+        </div>
+
         <div class="form-row-2" style="align-items:end; margin-top:4px;">
           <div class="form-group" style="margin-bottom:6px;">
             <label>☁️ ক্লাউড সিঙ্ক (GitHub Token `ghp_...` একবার বসালেই অটো সিঙ্ক হবে):</label>
@@ -444,7 +479,7 @@
           </div>
           <div class="form-group" style="margin-bottom:6px; display:flex; gap:8px; flex-wrap:wrap;">
             <button type="button" class="btn-kcb-pink" id="saveQuickControlsBtn" style="flex:1;">
-              💾 ফন্ট, ডেলিভারি ও ক্লাউড সিঙ্ক সেভ করুন
+              💾 লোগো, ফন্ট, ডেলিভারি ও ক্লাউড সিঙ্ক সেভ করুন
             </button>
           </div>
         </div>

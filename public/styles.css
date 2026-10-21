@@ -55,22 +55,57 @@ body {
   padding: 0 14px;
 }
 
-/* ==================== TOP MARQUEE BAR ==================== */
+/* ==================== TOP PINK LIVE RUNNING MARQUEE BAR ==================== */
 .top-marquee-bar {
-  background: linear-gradient(90deg, #FCE4EC 0%, #E3F2FD 50%, #F1F8E9 100%);
-  border-bottom: 1px solid var(--border-light);
-  color: var(--text-dark);
-  font-size: 0.84rem;
-  font-weight: 500;
-  padding: 8px 0;
-  text-align: center;
+  background: linear-gradient(90deg, #D01262 0%, #E0186E 50%, #C2105B 100%);
+  color: #FFFFFF;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 9px 0;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(224, 24, 110, 0.2);
 }
 
-.marquee-inner strong {
-  color: var(--kcb-pink);
+.marquee-viewport {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* ==================== STICKY WHITE HEADER (KC BAZAR STYLE) ==================== */
+.marquee-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 36px;
+  white-space: nowrap;
+  will-change: transform;
+  animation: kcbLiveMarquee 22s linear infinite;
+}
+
+.top-marquee-bar:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-item {
+  color: #FFFFFF;
+  letter-spacing: 0.01em;
+}
+
+.marquee-divider {
+  color: #FFE082;
+  font-size: 0.9rem;
+}
+
+@keyframes kcbLiveMarquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* ==================== STICKY WHITE HEADER WITH DEDICATED LOGO SPACE ==================== */
 .site-header {
   position: sticky;
   top: 0;
@@ -91,10 +126,10 @@ body {
 }
 
 .header-menu-trigger {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border: 1px solid var(--border-light);
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   color: var(--text-dark);
   display: inline-flex;
@@ -117,14 +152,28 @@ body {
 .brand-identity {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-decoration: none;
   color: inherit;
 }
 
-.brand-logo-wrap {
-  display: flex;
+.brand-logo-showcase-frame {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  min-width: 145px;
+  padding: 6px 14px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF9FB 100%);
+  border: 1.5px solid #F7C6DB;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(224, 24, 110, 0.09);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.brand-logo-showcase-frame:hover {
+  border-color: var(--kcb-pink);
+  transform: translateY(-1px);
 }
 
 .default-kcb-logo {
@@ -134,26 +183,29 @@ body {
   border-radius: 6px;
   overflow: hidden;
   font-weight: 800;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   letter-spacing: 0.03em;
 }
 
 .default-kcb-logo .logo-pink {
   background: var(--kcb-pink);
   color: #fff;
-  padding: 5px 8px;
+  padding: 6px 10px;
 }
 
 .default-kcb-logo .logo-dark {
   background: #fff;
   color: var(--text-dark);
-  padding: 5px 8px;
+  padding: 6px 10px;
 }
 
 .custom-logo-img {
-  max-height: 44px;
-  max-width: 150px;
+  max-height: 52px;
+  max-width: 195px;
+  width: auto;
+  height: auto;
   object-fit: contain;
+  display: block;
 }
 
 .brand-text-wrap {
@@ -2686,11 +2738,4 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 12px;
-}
-
-/* Customer-only website: hide admin quick buttons unless ?app=admin is active */
-body:not(.admin-unlocked) #toggleControlAppBtn,
-body:not(.admin-unlocked) .card-admin-quickbar,
-body:not(.admin-unlocked) #footerOpenAdminBtn {
-  display: none !important;
 }
