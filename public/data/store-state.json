@@ -18,6 +18,24 @@
     "fontSize": "110%"
   },
   "productOverrides": {
+    "17696": {
+      "name": "Cosrx Mini Combo – Advanced Snail 96 Essence and Snail 92 Cream",
+      "brand": "CosRx",
+      "brandSlug": "cosrx",
+      "salePrice": 1380,
+      "regularPrice": 1550,
+      "inStock": true,
+      "primaryCategory": "Combo Set",
+      "primaryCategorySlug": "combo-set",
+      "weight": "0.2 kg",
+      "sku": "cosrxcom001",
+      "description": "<ul>\n<li>Cosrx Advanced Snail 96 Mucin Power Essence &#8211; 30ml,</li>\n<li>Cosrx Advanced Snail 92 All In One Cream &#8211; 50g</li>\n</ul>",
+      "images": [
+        "https://kcbazar.com/wp-content/uploads/2024/02/Cosrx-Mini-Combo-Advanced-Snail-96-Essence-and-Snail-92-Cream.jpg",
+        "https://kcbazar.com/wp-content/uploads/2024/02/Cosrx-Mini-Combo-Advanced-Snail-96-Essence-and-Snail-92-Cream-2.jpg",
+        "https://kcbazar.com/wp-content/uploads/2024/02/Cosrx-Mini-Combo-Advanced-Snail-96-Essence-and-Snail-92-Cream-3.jpg"
+      ]
+    },
     "68413": {
       "name": "Arencia Retinal Booster Shot 30 ml",
       "brand": "Arencia",
