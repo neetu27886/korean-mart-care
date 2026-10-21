@@ -151,109 +151,38 @@ async function initApp() {
   }
 
   try {
+    const staticRes = await fetch('/data/store-state.json?t=' + Date.now());
+    if (staticRes.ok) {
+      mergeIntoStoreState(await staticRes.json());
+    }
+  } catch (e) {}
+
+  try {
+    const apiRes = await fetch('/api/store');
+    if (apiRes.ok) {
+      mergeIntoStoreState(await apiRes.json());
+    }
+  } catch (e) {}
+
+  await pullExternalCloudStateIfConfigured(false);
+  await pullGitHubStateIfConfigured(false);
+
+  try {
     const localRaw = localStorage.getItem(STORAGE_STATE_KEY);
     if (localRaw) {
       mergeIntoStoreState(JSON.parse(localRaw));
     }
   } catch (e) {}
 
-  // Render & route IMMEDIATELY so Product Share Links open with zero delay!
   recomputeCatalog();
   renderAll();
   bindEvents();
-  initKcbHeroSliderAndCountdown();
   handleInitialUrlRouting();
 
-  // Background non-blocking sync with static store-state, API, and GitHub
-  (async () => {
-    try {
-      const staticRes = await fetch('/data/store-state.json?t=' + Date.now());
-      if (staticRes.ok) {
-        mergeIntoStoreState(await staticRes.json());
-      }
-    } catch (e) {}
-
-    try {
-      const apiRes = await fetch('/api/store');
-      if (apiRes.ok) {
-        mergeIntoStoreState(await apiRes.json());
-      }
-    } catch (e) {}
-
-    await pullExternalCloudStateIfConfigured(false);
-    await pullGitHubStateIfConfigured(false);
-
-    try {
-      const localRaw2 = localStorage.getItem(STORAGE_STATE_KEY);
-      if (localRaw2) {
-        mergeIntoStoreState(JSON.parse(localRaw2));
-      }
-    } catch (e) {}
-
-    recomputeCatalog();
-    renderAll();
-
-    // If URL has a product share link and modal wasn't opened yet, open it now
-    const detailModal = document.getElementById('productDetailModal');
-    if (detailModal && detailModal.classList.contains('hidden')) {
-      handleInitialUrlRouting();
-    }
-
-    if (AppState.storeState.settings.autoSyncKcBazar !== false) {
-      autoSyncWithKcBazarLive(false, false);
-    }
-  })();
-}
-
-function initKcbHeroSliderAndCountdown() {
-  if (window.__kcbSliderInitialized) return;
-  window.__kcbSliderInitialized = true;
-
-  // 1. Live Countdown Timer (08 : 32 : 55 style from IMG_7829.png)
-  let remainingSecs = 8 * 3600 + 32 * 60 + 55;
-  const tickCountdown = () => {
-    if (remainingSecs <= 0) remainingSecs = 8 * 3600 + 32 * 60 + 55;
-    remainingSecs--;
-    const h = String(Math.floor(remainingSecs / 3600)).padStart(2, '0');
-    const m = String(Math.floor((remainingSecs % 3600) / 60)).padStart(2, '0');
-    const s = String(remainingSecs % 60).padStart(2, '0');
-    const elH = document.getElementById('cdHours');
-    const elM = document.getElementById('cdMins');
-    const elS = document.getElementById('cdSecs');
-    if (elH) elH.textContent = h;
-    if (elM) elM.textContent = m;
-    if (elS) elS.textContent = s;
-  };
-  setInterval(tickCountdown, 1000);
-
-  // 2. Hero Banner Slider
-  let activeSlide = 0;
-  const setSlide = (idx) => {
-    const slides = document.querySelectorAll('#kcbHeroBannerTrack .kcb-banner-slide');
-    const dots = document.querySelectorAll('#heroSlideDots .kcb-b-dot');
-    if (!slides.length) return;
-    activeSlide = (idx + slides.length) % slides.length;
-    slides.forEach((sl, i) => sl.classList.toggle('active', i === activeSlide));
-    dots.forEach((dt, i) => dt.classList.toggle('active', i === activeSlide));
-  };
-
-  document.getElementById('heroSlidePrev')?.addEventListener('click', () => setSlide(activeSlide - 1));
-  document.getElementById('heroSlideNext')?.addEventListener('click', () => setSlide(activeSlide + 1));
-  document.querySelectorAll('[data-hero-dot]').forEach((btn) => {
-    btn.addEventListener('click', () => setSlide(Number(btn.getAttribute('data-hero-dot')) || 0));
-  });
-  setInterval(() => setSlide(activeSlide + 1), 5000);
-
-  // 3. Skin Care Showcase Card Subcategory Jump
-  document.querySelectorAll('[data-cat-jump]').forEach((el) => {
-    el.addEventListener('click', () => {
-      const catSlug = el.getAttribute('data-cat-jump') || 'all';
-      AppState.activeCategory = catSlug;
-      AppState.visibleCount = 24;
-      renderAll();
-      document.getElementById('catalogSection')?.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
+  // Background live auto-sync with KC Bazar Skin Care updates
+  if (AppState.storeState.settings.autoSyncKcBazar !== false) {
+    autoSyncWithKcBazarLive(false, false);
+  }
 }
 
 function mergeIntoStoreState(incoming) {
@@ -464,15 +393,13 @@ function renderSiteBrandingAndSettings() {
 
   document.title = `${s.siteName || 'Korean Mart Care'} | ${s.tagline || '100% Authentic Korean Skincare'}`;
 
-  const rawAnn = (s.announcementText || '').trim();
-  const shortPromo =
-    !rawAnn || rawAnn.length > 42
-      ? '🎂 মেগা ডিসকাউন্ট'
-      : rawAnn;
+  const annText =
+    s.announcementText ||
+    `✨ ${s.siteName || 'Korean Mart Care'} — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ৳${deliveryFee}) ✨`;
   const annPrimary = document.getElementById('announcementTextPrimary');
   const annDup = document.getElementById('announcementTextDuplicate');
-  if (annPrimary) annPrimary.textContent = shortPromo;
-  if (annDup) annDup.textContent = shortPromo;
+  if (annPrimary) annPrimary.textContent = annText;
+  if (annDup) annDup.textContent = annText;
 
   const defaultSvg = document.getElementById('defaultLogoSvg');
   const customImg = document.getElementById('customLogoImg');
@@ -2106,6 +2033,8 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
     let addedCount = 0;
     let updatedPriceCount = 0;
 
+    const useNewKcBazarRate = AppState.storeState.settings.priceRateMode === 'new_kcbazar';
+
     for (const liveProd of liveItems) {
       const idStr = String(liveProd.id);
       const oldProd = existingMap.get(idStr);
@@ -2114,17 +2043,26 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
         existingMap.set(idStr, liveProd);
         addedCount++;
       } else {
-        if (oldProd.salePrice !== liveProd.salePrice || oldProd.regularPrice !== liveProd.regularPrice || oldProd.inStock !== liveProd.inStock) {
-          updatedPriceCount++;
+        if (useNewKcBazarRate) {
+          if (oldProd.salePrice !== liveProd.salePrice || oldProd.regularPrice !== liveProd.regularPrice) {
+            updatedPriceCount++;
+          }
+          Object.assign(oldProd, {
+            regularPrice: liveProd.regularPrice,
+            salePrice: liveProd.salePrice,
+            discountPercent: liveProd.discountPercent,
+            inStock: liveProd.inStock,
+            soldCount: liveProd.soldCount || oldProd.soldCount,
+            images: liveProd.images?.length ? liveProd.images : oldProd.images
+          });
+        } else {
+          // Preserve KC Bazar previous rate (old salePrice / regularPrice / discountPercent)
+          Object.assign(oldProd, {
+            inStock: liveProd.inStock,
+            soldCount: liveProd.soldCount || oldProd.soldCount,
+            images: liveProd.images?.length ? liveProd.images : oldProd.images
+          });
         }
-        Object.assign(oldProd, {
-          regularPrice: liveProd.regularPrice,
-          salePrice: liveProd.salePrice,
-          discountPercent: liveProd.discountPercent,
-          inStock: liveProd.inStock,
-          soldCount: liveProd.soldCount || oldProd.soldCount,
-          images: liveProd.images?.length ? liveProd.images : oldProd.images
-        });
       }
     }
 

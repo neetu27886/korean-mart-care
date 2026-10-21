@@ -119,7 +119,12 @@ async function runSync() {
     } catch (e) {}
   }
 
+  const existingProdMap = new Map((existingCatalog.products || []).map((p) => [String(p.id), p]));
   const allProductsMap = new Map();
+  // Seed with existing products so previous rates are preserved
+  for (const ep of existingCatalog.products || []) {
+    allProductsMap.set(ep.id, ep);
+  }
 
   for (let page = 1; page <= 12; page++) {
     const url = `https://kcbazar.com/wp-json/wc/store/v1/products?category=${SKIN_CARE_CATEGORY_ID}&per_page=100&page=${page}`;
@@ -137,6 +142,13 @@ async function runSync() {
       for (const raw of items) {
         const parsed = parseKcbazarProduct(raw);
         if (parsed) {
+          const prev = existingProdMap.get(String(parsed.id));
+          if (prev && prev.salePrice > 0) {
+            // Preserve previous rate (old salePrice / regularPrice / discountPercent)
+            parsed.salePrice = prev.salePrice;
+            parsed.regularPrice = prev.regularPrice || parsed.regularPrice;
+            parsed.discountPercent = prev.discountPercent ?? parsed.discountPercent;
+          }
           allProductsMap.set(parsed.id, parsed);
         }
       }
