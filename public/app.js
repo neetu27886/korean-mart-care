@@ -151,13 +151,6 @@ async function initApp() {
   }
 
   try {
-    const localRaw = localStorage.getItem(STORAGE_STATE_KEY);
-    if (localRaw) {
-      mergeIntoStoreState(JSON.parse(localRaw));
-    }
-  } catch (e) {}
-
-  try {
     const staticRes = await fetch('/data/store-state.json?t=' + Date.now());
     if (staticRes.ok) {
       mergeIntoStoreState(await staticRes.json());
@@ -173,6 +166,13 @@ async function initApp() {
 
   await pullExternalCloudStateIfConfigured(false);
   await pullGitHubStateIfConfigured(false);
+
+  try {
+    const localRaw = localStorage.getItem(STORAGE_STATE_KEY);
+    if (localRaw) {
+      mergeIntoStoreState(JSON.parse(localRaw));
+    }
+  } catch (e) {}
 
   recomputeCatalog();
   renderAll();
@@ -194,6 +194,17 @@ function mergeIntoStoreState(incoming) {
     }
     if (!incSet.instagramLink) {
       incSet.instagramLink = 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
+    }
+    // Preserve existing uploaded logo if incoming has empty logoUrl
+    if (!incSet.logoUrl && AppState.storeState.settings.logoUrl) {
+      incSet.logoUrl = AppState.storeState.settings.logoUrl;
+    }
+    // Preserve custom fontFamily & fontSize if incoming doesn't specify them
+    if (!incSet.fontFamily && AppState.storeState.settings.fontFamily) {
+      incSet.fontFamily = AppState.storeState.settings.fontFamily;
+    }
+    if (!incSet.fontSize && AppState.storeState.settings.fontSize) {
+      incSet.fontSize = AppState.storeState.settings.fontSize;
     }
     AppState.storeState.settings = { ...AppState.storeState.settings, ...incSet };
   }
