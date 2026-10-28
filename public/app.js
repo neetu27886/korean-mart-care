@@ -599,6 +599,7 @@ async function initApp() {
   // Background live auto-sync with KC Bazar Skin Care updates
   if (AppState.storeState.settings.autoSyncKcBazar !== false) {
     autoSyncWithKcBazarLive(false, false);
+    syncCatalogFromGitHubIfNewer(false);
   }
 }
 
@@ -2412,6 +2413,20 @@ async function pullGitHubStateIfConfigured(notify = false) {
         }
       }
     }
+    // Fallback: raw.githubusercontent.com (API rate-limit নেই) — দাম/লোগো/সেটিংস সবসময় লোড হবে
+    try {
+      const rawBase = `https://raw.githubusercontent.com/${repo}/${branch || 'main'}/`;
+      for (const rawPath of ['public/data/store-state.json', 'data/store-state.json']) {
+        const rawRes = await fetch(rawBase + rawPath + '?t=' + Math.floor(Date.now() / 60000));
+        if (rawRes.ok) {
+          const rawText = await rawRes.text();
+          mergeIntoStoreState(JSON.parse(rawText));
+          recomputeCatalog();
+          renderAll();
+          return;
+        }
+      }
+    } catch (err) {}
     if (notify) showToast('GitHub Repo-তে store-state.json পাওয়া যায়নি। প্রথমে পুশ করুন।');
   } catch (e) {
     if (notify) showToast('GitHub থেকে ডাটা আনতে সমস্যা হয়েছে।');
@@ -2474,6 +2489,51 @@ async function pushGitHubStateIfConfigured(notifySuccess = false) {
   }
 }
 
+/* GitHub Actions নতুন প্রোডাক্ট যোগ করলে Netlify build ছাড়াও সাইটে দেখাবে */
+async function syncCatalogFromGitHubIfNewer(force = false) {
+  const GH_CATALOG =
+    'https://raw.githubusercontent.com/neetu27886/korean-mart-care/main/public/data/catalog.json';
+  const CHECK_KEY = 'kmc_gh_catalog_check_v1';
+  try {
+    if (!force) {
+      const last = Number(localStorage.getItem(CHECK_KEY) || 0);
+      if (Date.now() - last < 3 * 60 * 60 * 1000) return 0;
+    }
+    const res = await fetch(GH_CATALOG + '?t=' + Math.floor(Date.now() / 3600000));
+    if (!res.ok) return 0;
+    const cat = await res.json();
+    if (!cat || !Array.isArray(cat.products)) return 0;
+
+    const existing = new Map((AppState.baseCatalog.products || []).map((p) => [String(p.id), p]));
+    let added = 0;
+    for (const p of cat.products) {
+      const idStr = String(p.id);
+      if (!existing.has(idStr)) {
+        AppState.baseCatalog.products.push(p);
+        existing.set(idStr, p);
+        added++;
+      } else {
+        const old = existing.get(idStr);
+        old.inStock = p.inStock;
+        old.soldCount = p.soldCount || old.soldCount;
+        if (Array.isArray(p.images) && p.images.length) old.images = p.images;
+      }
+    }
+    if (Array.isArray(cat.brands) && cat.brands.length) {
+      const haveBrands = new Set((AppState.baseCatalog.brands || []).map((b) => b.slug));
+      for (const b of cat.brands) if (!haveBrands.has(b.slug)) AppState.baseCatalog.brands.push(b);
+    }
+    localStorage.setItem(CHECK_KEY, String(Date.now()));
+    if (added) {
+      recomputeCatalog();
+      renderAll();
+    }
+    return added;
+  } catch (e) {
+    return 0;
+  }
+}
+
 async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
   const statusEl = document.getElementById('kcbAutoSyncStatusText');
   const toggleEl = document.getElementById('toggleKcbAutoSyncCheckbox');
@@ -2487,10 +2547,28 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
 
   try {
     const endpoint = fullSync ? '/api/kcbazar-auto-sync?full=1&force=1' : '/api/kcbazar-auto-sync';
-    const res = await fetch(endpoint);
-    if (!res.ok) throw new Error('KC Bazar API response error');
-    const data = await res.json();
-    const liveItems = Array.isArray(data.products) ? data.products : [];
+    let data = {};
+    try {
+      const res = await fetch(endpoint);
+      if (res.ok) data = await res.json();
+    } catch (apiErr) {}
+
+    let liveItems = Array.isArray(data.products) ? data.products : [];
+    let syncedAt = data.syncedAt;
+    if (!liveItems.length) {
+      // Netlify function unavailable হলে GitHub Actions-এর সর্বশেষ ক্যাটালগ ব্যবহার হবে
+      try {
+        const ghRes = await fetch(
+          'https://raw.githubusercontent.com/neetu27886/korean-mart-care/main/public/data/catalog.json?t=' +
+            Math.floor(Date.now() / 3600000)
+        );
+        if (ghRes.ok) {
+          const ghCat = await ghRes.json();
+          liveItems = Array.isArray(ghCat.products) ? ghCat.products : [];
+          syncedAt = ghCat.lastSyncedAt;
+        }
+      } catch (ghErr) {}
+    }
     if (!liveItems.length) return;
 
     const existingMap = new Map((AppState.baseCatalog.products || []).map((p) => [String(p.id), p]));
@@ -2536,7 +2614,7 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
     recomputeCatalog();
     renderAll();
 
-    const syncTime = new Date(data.syncedAt || Date.now()).toLocaleTimeString('bn-BD');
+    const syncTime = new Date(syncedAt || Date.now()).toLocaleTimeString('bn-BD');
     if (statusEl) {
       statusEl.textContent = `✅ সর্বশেষ Auto-Sync: ${syncTime} (${liveItems.length}টি প্রোডাক্ট চেক — নতুন: ${addedCount}টি, দাম আপডেট: ${updatedPriceCount}টি, 🔒 লক করা দাম অপরিবর্তিত: ${lockedCount}টি)`;
     }
