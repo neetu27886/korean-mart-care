@@ -3148,3 +3148,50 @@ body {
     align-items: start;
   }
 }
+
+/* ==================== NETLIFY LIVE DEPLOY CARD ==================== */
+.netlify-deploy-card {
+  border: 2px solid #00AD9F;
+  background: #F2FCFB;
+  margin-bottom: 18px;
+}
+
+.netlify-deploy-card h2 {
+  color: #007A70;
+}
+
+.netlify-how-to {
+  margin: 10px 0 0 18px;
+  font-size: 0.82rem;
+  line-height: 1.75;
+  color: var(--text-body);
+}
+
+.netlify-how-to li {
+  margin-bottom: 4px;
+}
+
+.netlify-deploy-status {
+  margin-top: 12px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  line-height: 1.6;
+  background: #E7F7F5;
+  border: 1px solid #B9E6E1;
+  color: #00695F;
+  word-break: break-word;
+}
+
+.netlify-deploy-status.error {
+  background: #FFF0F0;
+  border-color: #F7C5C5;
+  color: #B00020;
+}
+
+.netlify-deploy-status.busy {
+  background: #FFF9E6;
+  border-color: #F5E3A6;
+  color: #8A6D00;
+}

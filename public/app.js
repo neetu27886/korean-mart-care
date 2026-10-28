@@ -290,7 +290,7 @@ function kmcCrc32Bytes(bytes) {
   return (crc ^ -1) >>> 0;
 }
 
-function kmcZipBlob(files) {
+function kmcZipBlob(files, mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
   const enc = new TextEncoder();
   const chunks = [];
   const central = [];
@@ -310,7 +310,7 @@ function kmcZipBlob(files) {
   let cdSize = 0;
   for (const c of central) cdSize += c.length;
   const end = new Uint8Array([0x50, 0x4b, 0x05, 0x06, 0, 0, 0, 0, ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(offset), ...u16(0)]);
-  return new Blob([...chunks, ...central, end], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  return new Blob([...chunks, ...central, end], { type: mime });
 }
 
 function kmcXmlEsc(s) {
@@ -3363,6 +3363,21 @@ function bindEvents() {
     showToast('♻️ ডিফল্ট ভেরিফিকেশন ব্যানার ছবি ফিরিয়ে আনা হয়েছে — সেভ করুন।');
   });
 
+  document.getElementById('quickNetlifyJumpBtn')?.addEventListener('click', () => {
+    document.querySelector('[data-admin-tab="cloud"]')?.click();
+    setTimeout(() => {
+      document.getElementById('netlifyDeployCard')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const el = document.getElementById('netlifyDeployCard');
+      if (el) {
+        el.style.transition = 'box-shadow .4s';
+        el.style.boxShadow = '0 0 0 4px rgba(0, 173, 159, .35)';
+        setTimeout(() => (el.style.boxShadow = ''), 1600);
+      }
+    }, 150);
+  });
+
+  initNetlifyDeployControls();
+
   document.querySelectorAll('[data-jump-tab]').forEach((card) => {
     card.addEventListener('click', () => {
       const targetTab = card.getAttribute('data-jump-tab');
@@ -3653,6 +3668,244 @@ function renderAllBrandsModalGrid(query = '') {
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
+
+
+/* ==================== NETLIFY LIVE DEPLOY (BUILD CREDIT ছাড়াই) ==================== */
+const STORAGE_NETLIFY_CFG_KEY = 'kmc_netlify_cfg_v1';
+
+const NETLIFY_PUBLISH_FILES = [
+  'index.html',
+  'app.js',
+  'styles.css',
+  'manifest.json',
+  '_redirects',
+  'data/catalog.json',
+  'data/store-state.json',
+  'images/authentic-verified-poster.jpg',
+  'images/authentic-verified-wide.jpg',
+  'images/authentic-ads-banner.jpg',
+  'downloads/korean-mart-care-product-feed.csv',
+  'downloads/korean-mart-care-product-feed.xlsx',
+  'downloads/korean-mart-care-price-list.csv',
+  'downloads/korean-mart-care-meta-catalog.csv'
+];
+
+function getNetlifyCfg() {
+  try {
+    const raw = localStorage.getItem(STORAGE_NETLIFY_CFG_KEY);
+    const cfg = raw ? JSON.parse(raw) : {};
+    return {
+      token: cfg.token || document.getElementById('netlifyTokenInput')?.value.trim() || '',
+      site: cfg.site || document.getElementById('netlifySiteInput')?.value.trim() || 'korean-mart-care-official'
+    };
+  } catch (e) {
+    return { token: '', site: 'korean-mart-care-official' };
+  }
+}
+
+function saveNetlifyCfg(token, site) {
+  try {
+    localStorage.setItem(STORAGE_NETLIFY_CFG_KEY, JSON.stringify({ token, site }));
+  } catch (e) {}
+}
+
+function setNetlifyStatus(text, kind = '') {
+  const el = document.getElementById('netlifyDeployStatus');
+  if (!el) return;
+  el.classList.remove('hidden', 'error', 'busy');
+  if (kind) el.classList.add(kind);
+  el.innerHTML = text;
+}
+
+function netlifyNormalizeSite(site) {
+  return String(site || '')
+    .trim()
+    .replace(/^https?:\/\//i, '')
+    .replace(/\/+$/, '')
+    .replace(/\.netlify\.app$/i, '');
+}
+
+async function netlifyResolveSite(token, site) {
+  const name = netlifyNormalizeSite(site);
+  if (!name) throw new Error('Netlify সাইটের নাম দিন।');
+
+  const commonHeaders = {
+    Authorization: `Bearer ${token}`,
+    Accept: 'application/json'
+  };
+
+  let res = await fetch(`https://api.netlify.com/api/v1/sites/${encodeURIComponent(name)}`, {
+    headers: commonHeaders
+  });
+  if (res.ok) return await res.json();
+
+  if (res.status === 401 || res.status === 403) {
+    throw new Error('Netlify টোকেনটি সঠিক নয় বা মেয়াদ শেষ। নতুন Personal access token তৈরি করুন।');
+  }
+
+  // fallback: search list of sites
+  res = await fetch(`https://api.netlify.com/api/v1/sites?per_page=100`, { headers: commonHeaders });
+  if (res.ok) {
+    const list = await res.json();
+    const found = (Array.isArray(list) ? list : []).find(
+      (s) =>
+        String(s.name || '').toLowerCase() === name.toLowerCase() ||
+        String(s.custom_domain || '').toLowerCase() === name.toLowerCase() ||
+        String(s.url || '').includes(name)
+    );
+    if (found) return found;
+  }
+  throw new Error(`“${name}” নামে কোনো Netlify সাইট পাওয়া যায়নি। সাইটের নাম/URL ঠিক করে দিন।`);
+}
+
+async function buildPublishZipFromGitHub(repo, branch) {
+  const base = `https://raw.githubusercontent.com/${repo}/${branch}/public/`;
+  const enc = new TextEncoder();
+  const files = [];
+  let fetched = 0;
+
+  for (const relPath of NETLIFY_PUBLISH_FILES) {
+    try {
+      const res = await fetch(base + relPath + '?t=' + Date.now());
+      if (!res.ok) continue;
+      const buf = new Uint8Array(await res.arrayBuffer());
+      files.push({ name: relPath, data: buf });
+      fetched++;
+    } catch (e) {}
+  }
+
+  if (!files.length) {
+    throw new Error('GitHub থেকে ফাইল আনা যায়নি — আগে “GitHub-এ পুশ করুন” চাপুন।');
+  }
+
+  return { blob: kmcZipBlob(files, 'application/zip'), count: fetched };
+}
+
+async function netlifyDeployNow() {
+  const cfg = getNetlifyCfg();
+  const tokenInput = document.getElementById('netlifyTokenInput');
+  const siteInput = document.getElementById('netlifySiteInput');
+  const token = (tokenInput?.value || cfg.token || '').trim();
+  const site = (siteInput?.value || cfg.site || '').trim();
+
+  if (!token) {
+    setNetlifyStatus('⚠️ আগে Netlify Personal Access Token বসান। উপরের ধাপ ১ অনুযায়ী টোকেন তৈরি করুন।', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('netlifyDeployBtn');
+  if (btn) btn.disabled = true;
+
+  try {
+    setNetlifyStatus('⏳ ১/৩ — Netlify সাইট খোঁজা হচ্ছে...', 'busy');
+    const siteObj = await netlifyResolveSite(token, site);
+    saveNetlifyCfg(token, siteObj.name || site);
+
+    setNetlifyStatus('⏳ ২/৩ — সর্বশেষ ফাইলগুলো GitHub থেকে আনা হচ্ছে...', 'busy');
+    let ghRepo = document.getElementById('githubRepoInput')?.value.trim() || 'neetu27886/korean-mart-care';
+    let ghBranch = document.getElementById('githubBranchInput')?.value.trim() || 'main';
+
+    // আগে বর্তমান দাম/সেটিংস GitHub-এ সেভ করে নেওয়া (যাতে লাইভ ডিপ্লয়ে সেগুলোই যায়)
+    try {
+      await pushGitHubStateIfConfigured(false);
+    } catch (e) {}
+
+    const { blob, count } = await buildPublishZipFromGitHub(ghRepo, ghBranch);
+
+    setNetlifyStatus(`⏳ ৩/৩ — ${count}টি ফাইল (${Math.round(blob.size / 1024 / 1024 * 10) / 10} MB) Netlify-তে আপলোড হচ্ছে...`, 'busy');
+
+    const deployRes = await fetch(`https://api.netlify.com/api/v1/sites/${siteObj.id}/deploys`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/zip'
+      },
+      body: blob
+    });
+
+    if (!deployRes.ok) {
+      const errTxt = await deployRes.text().catch(() => '');
+      throw new Error(`Netlify ডিপ্লয় ব্যর্থ (${deployRes.status}): ${errTxt.slice(0, 160)}`);
+    }
+
+    const deploy = await deployRes.json();
+    setNetlifyStatus(`⏳ ডিপ্লয় শুরু হয়েছে (ID: ${deploy.id}) — লাইভ হওয়ার অপেক্ষা...`, 'busy');
+
+    const liveUrl = deploy.ssl_url || siteObj.ssl_url || siteObj.url || `https://${siteObj.name}.netlify.app`;
+    let state = deploy.state || 'processing';
+    for (let i = 0; i < 20 && state !== 'ready' && state !== 'error'; i++) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const stRes = await fetch(`https://api.netlify.com/api/v1/deploys/${deploy.id}`, {
+          headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' }
+        });
+        if (stRes.ok) {
+          const st = await stRes.json();
+          state = st.state || state;
+          setNetlifyStatus(`⏳ ডিপ্লয় হচ্ছে... (${state})`, 'busy');
+        }
+      } catch (e) {}
+    }
+
+    if (state === 'error') {
+      setNetlifyStatus('❌ Netlify ডিপ্লয় ব্যর্থ হয়েছে। আবার চেষ্টা করুন।', 'error');
+      return;
+    }
+
+    setNetlifyStatus(
+      `✅ ডিপ্লয় সফল! ${count}টি ফাইল লাইভ হয়েছে। <a href="${liveUrl}" target="_blank" rel="noopener">${liveUrl}</a><br>
+       <a href="${liveUrl}" target="_blank" rel="noopener" class="btn-kcb-green" style="display:inline-block; margin-top:8px; padding:8px 14px; text-decoration:none;">🔗 নতুন সাইট দেখুন</a>
+       &nbsp;<button type="button" class="btn-kcb-outline" onclick="window.location.reload()" style="padding:8px 14px;">🔄 রিফ্রেশ</button>`
+    );
+    showToast('🚀 ওয়েবসাইট লাইভ ডিপ্লয় সফল হয়েছে!');
+  } catch (err) {
+    setNetlifyStatus(`❌ ${err.message || 'ডিপ্লয় করা যায়নি।'}`, 'error');
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function netlifyCheckConnection() {
+  const token = (document.getElementById('netlifyTokenInput')?.value || getNetlifyCfg().token || '').trim();
+  const site = document.getElementById('netlifySiteInput')?.value || getNetlifyCfg().site;
+  if (!token) {
+    setNetlifyStatus('⚠️ আগে Netlify Personal Access Token বসান।', 'error');
+    return;
+  }
+  setNetlifyStatus('⏳ চেক করা হচ্ছে...', 'busy');
+  try {
+    const siteObj = await netlifyResolveSite(token, site);
+    saveNetlifyCfg(token, siteObj.name || site);
+    setNetlifyStatus(
+      `✅ সংযোগ ঠিক আছে!<br>সাইট: <strong>${siteObj.name}</strong><br>লাইভ URL: <a href="${siteObj.ssl_url || siteObj.url}" target="_blank" rel="noopener">${siteObj.ssl_url || siteObj.url}</a><br>এখন “🚀 এখনই লাইভ ডিপ্লয় করুন” চাপুন।`
+    );
+    if (document.getElementById('netlifySiteInput')) {
+      document.getElementById('netlifySiteInput').value = siteObj.name || site;
+    }
+  } catch (err) {
+    setNetlifyStatus(`❌ ${err.message}`, 'error');
+  }
+}
+
+function initNetlifyDeployControls() {
+  try {
+    const cfg = JSON.parse(localStorage.getItem(STORAGE_NETLIFY_CFG_KEY) || '{}');
+    const tokInput = document.getElementById('netlifyTokenInput');
+    const siteInput = document.getElementById('netlifySiteInput');
+    if (tokInput && cfg.token) tokInput.value = cfg.token;
+    if (siteInput && cfg.site) siteInput.value = cfg.site;
+  } catch (e) {}
+
+  document.getElementById('netlifyCheckBtn')?.addEventListener('click', netlifyCheckConnection);
+
+  document.getElementById('netlifyDeployBtn')?.addEventListener('click', async () => {
+    const ok = window.confirm(
+      'আপনার সর্বশেষ দাম, ছবি ও সেটিংস GitHub-এ সেভ হয়ে তারপর সেগুলোই Netlify-তে লাইভ ডিপ্লয় হবে। চালিয়ে যাবেন?'
+    );
+    if (!ok) return;
+    await netlifyDeployNow();
+  });
+}
 
 /* ==================== AUTHENTICITY BANNER ADMIN FORM SYNC ==================== */
 function renderAuthenticityBannerAdminForm() {

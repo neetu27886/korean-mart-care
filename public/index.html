@@ -566,6 +566,9 @@
             <button type="button" class="btn-kcb-pink" id="saveQuickControlsBtn" style="flex:1;">
               💾 লোগো, ফন্ট, ডেলিভারি ও ক্লাউড সিঙ্ক সেভ করুন
             </button>
+            <button type="button" class="btn-kcb-outline" id="quickNetlifyJumpBtn" style="flex:1; background:#fff; color:#007A70; border-color:#00AD9F;">
+              🚀 লাইভ ডিপ্লয় (বিল্ড ছাড়া)
+            </button>
           </div>
         </div>
       </div>
@@ -984,6 +987,44 @@
             <button type="button" class="btn-kcb-outline" id="pullFromGithubBtn">🔄 GitHub থেকে লেটেস্ট ডাটা আনুন</button>
           </div>
           <div id="githubDeployProgressText" style="margin-top:10px; font-size:0.86rem; font-weight:700; color:var(--kcb-pink);"></div>
+        </div>
+
+        <!-- 🚀 NETLIFY LIVE DEPLOY (BUILD CREDIT ছাড়াই) -->
+        <div class="admin-panel-card netlify-deploy-card" id="netlifyDeployCard">
+          <h2>🚀 Netlify লাইভ ডিপ্লয় — অ্যাপ থেকেই সরাসরি (বিল্ড ছাড়া)</h2>
+          <p class="panel-subtext">
+            Netlify-এর মাসিক <strong>build credit</strong> শেষ হলেও এই বাটন দিয়ে <strong>বিল্ড ছাড়াই</strong> আপনার লাইভ সাইটে নতুন ডিজাইন,
+            অথেনটিক ব্যানার ও দামের লক সরাসরি ডিপ্লয় হয়ে যাবে। একবার Netlify টোকেন বসিয়ে দিলে ভবিষ্যতে যেকোনো পরিবর্তন
+            <strong>এক ক্লিকে</strong> লাইভ করা যাবে — ড্যাশবোর্ডে যেতে হবে না।
+          </p>
+
+          <ol class="netlify-how-to">
+            <li>একবার <strong>app.netlify.com</strong> → ওপরের ডান কোণে প্রোফাইল → <strong>User settings</strong> → <strong>Applications</strong> → <strong>Personal access tokens</strong> → <em>New access token</em> নাম দিয়ে তৈরি করুন।</li>
+            <li>তৈরি হওয়া <strong>টোকেনটি</strong> নিচের বক্সে পেস্ট করে <em>“টোকেন ও সাইট চেক করুন”</em> চাপুন।</li>
+            <li>এরপর <em>“🚀 এখনই লাইভ ডিপ্লয়”</em> চাপলেই আপডেট সাইটে চলে যাবে (১০-২০ সেকেন্ড)।</li>
+          </ol>
+
+          <div class="form-row-2" style="margin-top:12px;">
+            <div class="form-group">
+              <label>Netlify Personal Access Token:</label>
+              <input type="password" id="netlifyTokenInput" class="admin-input" placeholder="nlp_... বা আপনার Netlify access token" />
+            </div>
+            <div class="form-group">
+              <label>Netlify Site নাম বা URL:</label>
+              <input type="text" id="netlifySiteInput" class="admin-input" value="korean-mart-care-official" placeholder="korean-mart-care-official" />
+            </div>
+          </div>
+
+          <div class="form-actions" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn-kcb-outline" id="netlifyCheckBtn" style="background:#fff;">
+              🔍 টোকেন ও সাইট চেক করুন
+            </button>
+            <button type="button" class="btn-kcb-green" id="netlifyDeployBtn">
+              🚀 এখনই লাইভ ডিপ্লয় করুন
+            </button>
+          </div>
+
+          <div id="netlifyDeployStatus" class="netlify-deploy-status hidden"></div>
         </div>
 
         <div class="admin-two-col">
