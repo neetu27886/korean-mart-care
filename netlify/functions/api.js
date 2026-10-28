@@ -7,16 +7,21 @@ let memoryStoreState = {
     logoUrl: '',
     deliveryCharge: 110,
     deliveryNote: 'সারা বাংলাদেশে হোম ডেলিভারি চার্জ ১১০ টাকা (২৪-৪৮ ঘণ্টার মধ্যে ডেলিভারি)',
-    whatsappNumber: '8801700000000',
-    messengerLink: 'https://m.me/KoreanMartCare',
-    facebookPage: 'https://facebook.com/KoreanMartCare',
-    supportPhone: '+880 1700-000000',
-    announcementText: '✨ Korean Mart Care-এ স্বাগতম! ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪-৪৮ ঘণ্টার মধ্যে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা) ✨',
-    heroTitle: 'Authentic Korean Glass Skin Care',
+    messengerLink: 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr',
+    facebookPage: 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr',
+    instagramLink: 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr',
+    siteUrl: 'https://korean-mart-care-official.netlify.app',
+    announcementText: '✨ Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার | ডেলিভারি চার্জ ৳১১০ ✨',
+    heroTitle: 'Korean Mart Care — Original Skin Care Collection',
     heroSubtitle: 'দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অরিজিনাল স্কিনকেয়ার কালেকশন এখন Korean Mart Care-এ।',
+    priceRateMode: 'old_kcbazar',
+    autoSyncKcBazar: true,
+    authenticBannerEnabled: true,
+    authenticBannerImage: 'images/authentic-verified-poster.jpg',
     adminPin: '1234'
   },
   productOverrides: {},
+  priceLocks: {},
   customProducts: [],
   deletedProductIds: [],
   brandOverrides: {},
@@ -176,6 +181,7 @@ exports.handler = async (event) => {
   if (reqPath === '/store' && event.httpMethod === 'POST') {
     if (body.settings) memoryStoreState.settings = { ...memoryStoreState.settings, ...body.settings };
     if (body.productOverrides) memoryStoreState.productOverrides = { ...memoryStoreState.productOverrides, ...body.productOverrides };
+    if (body.priceLocks) memoryStoreState.priceLocks = { ...(memoryStoreState.priceLocks || {}), ...body.priceLocks };
     if (Array.isArray(body.customProducts)) memoryStoreState.customProducts = body.customProducts;
     if (Array.isArray(body.deletedProductIds)) memoryStoreState.deletedProductIds = body.deletedProductIds;
     if (body.brandOverrides) memoryStoreState.brandOverrides = { ...memoryStoreState.brandOverrides, ...body.brandOverrides };

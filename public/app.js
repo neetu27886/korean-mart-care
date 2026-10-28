@@ -7,6 +7,7 @@ const STORAGE_CART_KEY = 'kmc_cart_v1';
 const STORAGE_WISHLIST_KEY = 'kmc_wishlist_v1';
 const STORAGE_CLOUD_CFG_KEY = 'kmc_cloud_config_v1';
 const STORAGE_GITHUB_CFG_KEY = 'kmc_github_config_v1';
+const STORAGE_PRICE_LOCK_KEY = 'kmc_price_locks_v1';
 
 const AppState = {
   baseCatalog: {
@@ -33,6 +34,7 @@ const AppState = {
         'দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অরিজিনাল স্কিনকেয়ার প্রোডাক্ট। ডেলিভারি ম্যানের সামনে পণ্য চেক করে রিসিভ করার সুবিধা!'
     },
     productOverrides: {},
+    priceLocks: {},
     customProducts: [],
     deletedProductIds: [],
     brandOverrides: {},
@@ -128,6 +130,419 @@ function fileToOptimizedDataUrl(file, maxWidth = 900, quality = 0.85) {
   });
 }
 
+/* ==================== PRICE LOCK ENGINE (KC Bazar-এর আগের রেট লক) ==================== */
+function priceLockOf(id) {
+  const locks = AppState.storeState.priceLocks || {};
+  return locks[String(id)] || null;
+}
+
+function priceLockCount() {
+  return Object.keys(AppState.storeState.priceLocks || {}).length;
+}
+
+function applyPriceLockToProduct(prod, idStr) {
+  const lock = priceLockOf(idStr);
+  if (!lock) return prod;
+  const sale = Number(lock.salePrice) || 0;
+  const reg = Number(lock.regularPrice) || 0;
+  if (sale > 0) prod.salePrice = sale;
+  if (reg > 0) prod.regularPrice = Math.max(reg, sale || Number(prod.salePrice) || 0);
+  prod.priceLocked = true;
+  prod.priceLockedAt = Number(lock.lockedAt) || 0;
+  prod.priceLockSource = lock.source || 'owner';
+  return prod;
+}
+
+function setPriceLock(id, salePrice, regularPrice, source = 'owner') {
+  const idStr = String(id);
+  const sale = Number(salePrice) || 0;
+  const reg = Math.max(Number(regularPrice) || 0, sale);
+  if (sale <= 0) return;
+  AppState.storeState.priceLocks = AppState.storeState.priceLocks || {};
+  AppState.storeState.priceLocks[idStr] = {
+    salePrice: sale,
+    regularPrice: reg,
+    lockedAt: Date.now(),
+    source
+  };
+  persistPriceLocks();
+}
+
+function removePriceLock(id) {
+  const idStr = String(id);
+  if (AppState.storeState.priceLocks) {
+    delete AppState.storeState.priceLocks[idStr];
+  }
+  const ov = (AppState.storeState.productOverrides || {})[idStr];
+  if (ov && (Object.prototype.hasOwnProperty.call(ov, 'salePrice') || Object.prototype.hasOwnProperty.call(ov, 'regularPrice'))) {
+    delete ov.salePrice;
+    delete ov.regularPrice;
+    if (!Object.keys(ov).length) {
+      delete AppState.storeState.productOverrides[idStr];
+    }
+  }
+  persistPriceLocks();
+}
+
+function persistPriceLocks() {
+  try {
+    localStorage.setItem(STORAGE_PRICE_LOCK_KEY, JSON.stringify(AppState.storeState.priceLocks || {}));
+  } catch (e) {}
+}
+
+function loadLocalPriceLocks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_PRICE_LOCK_KEY);
+    if (!raw) return;
+    const localLocks = JSON.parse(raw) || {};
+    const cur = AppState.storeState.priceLocks || {};
+    for (const [id, lk] of Object.entries(localLocks)) {
+      if (!lk) continue;
+      const ex = cur[id];
+      const newAt = Number(lk.lockedAt) || 0;
+      const oldAt = Number(ex?.lockedAt) || 0;
+      if (!ex || newAt >= oldAt) cur[id] = lk;
+    }
+    AppState.storeState.priceLocks = cur;
+  } catch (e) {}
+}
+
+async function relockPricesFromKcBazarOldRate(silent = true) {
+  try {
+    const res = await fetch('/data/catalog.json?t=' + Date.now());
+    if (!res.ok) throw new Error('catalog fetch failed');
+    const cat = await res.json();
+    const now = Date.now();
+    const locks = {};
+    for (const p of cat.products || []) {
+      const sale = Number(p.salePrice) || 0;
+      if (sale <= 0) continue;
+      locks[String(p.id)] = {
+        salePrice: sale,
+        regularPrice: Math.max(Number(p.regularPrice) || 0, sale),
+        lockedAt: now,
+        source: 'kcbazar_old_rate'
+      };
+    }
+    AppState.storeState.priceLocks = locks;
+    AppState.storeState.settings.priceRateMode = 'old_kcbazar';
+    persistPriceLocks();
+    if (!silent) showToast('🔒 ' + Object.keys(locks).length + 'টি প্রোডাক্টে KC Bazar-এর আগের রেট আবার লক করা হয়েছে!');
+    return Object.keys(locks).length;
+  } catch (e) {
+    if (!silent) showToast('আগের রেট ফিরিয়ে আনতে সমস্যা হয়েছে।');
+    return 0;
+  }
+}
+
+/* ==================== PRODUCT DATA EXPORT (ADS / ONLINE STORE FEED) ==================== */
+function kmcStripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = String(html || '');
+  tmp.querySelectorAll('br').forEach((br) => br.replaceWith('\n'));
+  tmp.querySelectorAll('li').forEach((li) => {
+    li.textContent = '• ' + (li.textContent || '').trim() + '\n';
+  });
+  const txt = tmp.textContent || '';
+  return txt.replace(/\n{3,}/g, '\n\n').replace(/[ \t]{2,}/g, ' ').trim();
+}
+
+function kmcSiteUrl() {
+  const configured = (AppState.storeState.settings.siteUrl || '').trim();
+  if (configured) return configured.replace(/\/+$/, '');
+  return window.location.origin;
+}
+
+function kmcProductLink(p) {
+  const slug = p.slug || slugify(p.name || 'product');
+  return kmcSiteUrl() + '/product/' + encodeURIComponent(slug);
+}
+
+function kmcProductImages(p) {
+  return (p.images || []).filter((u) => typeof u === 'string' && u.trim().length > 0);
+}
+
+function csvEscapeCell(val) {
+  const s = val === null || val === undefined ? '' : String(val);
+  if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function toCsvText(headers, rows) {
+  const lines = [headers.map(csvEscapeCell).join(',')];
+  for (const row of rows) lines.push(row.map(csvEscapeCell).join(','));
+  return '\ufeff' + lines.join('\r\n');
+}
+
+var KMC_CRC_TABLE = (function () {
+  const t = [];
+  for (let n = 0; n < 256; n++) {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+
+function kmcCrc32Bytes(bytes) {
+  let crc = 0 ^ -1;
+  for (let i = 0; i < bytes.length; i++) crc = (crc >>> 8) ^ KMC_CRC_TABLE[(crc ^ bytes[i]) & 0xff];
+  return (crc ^ -1) >>> 0;
+}
+
+function kmcZipBlob(files) {
+  const enc = new TextEncoder();
+  const chunks = [];
+  const central = [];
+  let offset = 0;
+  const u16 = (n) => [n & 255, (n >>> 8) & 255];
+  const u32 = (n) => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+  for (const f of files) {
+    const nameBytes = enc.encode(f.name);
+    const crc = kmcCrc32Bytes(f.data);
+    const size = f.data.length;
+    const local = new Uint8Array([0x50, 0x4b, 0x03, 0x04, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...u32(crc), ...u32(size), ...u32(size), ...u16(nameBytes.length), ...u16(0)]);
+    chunks.push(local, nameBytes, f.data);
+    const cd = new Uint8Array([0x50, 0x4b, 0x01, 0x02, 20, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...u32(crc), ...u32(size), ...u32(size), ...u16(nameBytes.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(offset)]);
+    central.push(cd, nameBytes);
+    offset += local.length + nameBytes.length + size;
+  }
+  let cdSize = 0;
+  for (const c of central) cdSize += c.length;
+  const end = new Uint8Array([0x50, 0x4b, 0x05, 0x06, 0, 0, 0, 0, ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(offset), ...u16(0)]);
+  return new Blob([...chunks, ...central, end], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+}
+
+function kmcXmlEsc(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function kmcColName(i) {
+  let s = '';
+  let n = i + 1;
+  while (n > 0) {
+    const m = (n - 1) % 26;
+    s = String.fromCharCode(65 + m) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+
+function buildXlsxBlob(headers, rows, sheetName = 'Products') {
+  const enc = new TextEncoder();
+  let sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>';
+  [headers, ...rows].forEach((row, r) => {
+    sheet += '<row r="' + (r + 1) + '">';
+    row.forEach((val, c) => {
+      let v = val === null || val === undefined ? '' : String(val);
+      if (v.length > 32000) v = v.slice(0, 32000);
+      sheet += '<c r="' + kmcColName(c) + (r + 1) + '" t="inlineStr"><is><t xml:space="preserve">' + kmcXmlEsc(v) + '</t></is></c>';
+    });
+    sheet += '</row>';
+  });
+  sheet += '</sheetData></worksheet>';
+  const files = [
+    { name: '[Content_Types].xml', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/></Types>') },
+    { name: '_rels/.rels', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>') },
+    { name: 'xl/workbook.xml', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="' + kmcXmlEsc(sheetName).slice(0, 30) + '" sheetId="1" r:id="rId1"/></sheets></workbook>') },
+    { name: 'xl/_rels/workbook.xml.rels', data: enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>') },
+    { name: 'xl/worksheets/sheet1.xml', data: enc.encode(sheet) }
+  ];
+  return kmcZipBlob(files);
+}
+
+function downloadBlobFile(filename, blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+function getExportProducts() {
+  const b = document.getElementById('exportBrandFilter')?.value || 'all';
+  const c = document.getElementById('exportCategoryFilter')?.value || 'all';
+  return (AppState.products || []).filter((p) => {
+    if (b !== 'all' && p.brandSlug !== b) return false;
+    if (c !== 'all' && p.primaryCategorySlug !== c) return false;
+    return true;
+  });
+}
+
+function customColumnValue(header, p) {
+  const h = String(header || '').toLowerCase().replace(/[^a-z0-9ঀ-৿]+/g, ' ').trim();
+  const imgs = kmcProductImages(p);
+  const has = (...keys) => keys.some((k) => h.includes(k));
+  if (has('image link', 'image_link', 'main image', 'primary image', 'image 1', 'img1', 'thumbnail', 'ছবি ১', 'ছবি 1')) return imgs[0] || '';
+  if (has('image 2', 'image2', 'img2', 'ছবি ২', 'ছবি 2')) return imgs[1] || '';
+  if (has('additional image', 'additional_image', 'extra image', 'other image')) return imgs.slice(1).join(',');
+  if (has('image', 'img', 'photo', 'ছবি', 'picture')) return imgs.join(',');
+  if (has('compare', 'regular', 'mrp', 'original', 'old price', 'strike')) return String(p.regularPrice || '');
+  if (has('sale', 'discount', 'offer', 'current price', 'selling')) {
+    if (has('percent', '%', 'rate')) return String(p.discountPercent || 0);
+    return String(p.salePrice || '');
+  }
+  if (has('price')) return String(p.salePrice || '');
+  if (has('link', 'url', 'লিঙ্ক')) return kmcProductLink(p);
+  if (has('sku', 'code', 'আইডি', 'id')) return String(p.sku || p.id || '');
+  if (has('brand', 'vendor', 'ব্র্যান্ড')) return p.brand || 'Korean Skincare';
+  if (has('categor', 'type', 'ক্যাটাগরি', 'collection')) return p.primaryCategory || 'Skin Care';
+  if (has('stock', 'inventory', 'available', 'স্টক')) return p.inStock === false ? '0' : 'In Stock';
+  if (has('weight', 'size', 'volume', 'পরিমাণ')) return p.weight || '';
+  if (has('desc', 'detail', 'বিবরণ', 'body')) return kmcStripHtml(p.description || '');
+  if (has('title', 'name', 'product', 'নাম')) return p.name || '';
+  if (has('sold', 'order')) return String(p.soldCount || 0);
+  return '';
+}
+
+function buildExportTable(format) {
+  const products = getExportProducts();
+  const stamp = new Date().toISOString().slice(0, 10);
+  let headers = [];
+  let rows = [];
+
+  if (format === 'full') {
+    headers = ['Product ID', 'Product Name', 'Brand', 'Category', 'SKU', 'Size / Weight', 'Regular Price (BDT)', 'Sale Price (BDT)', 'Discount %', 'Stock Status', 'Sold Count', 'Product Link', 'Main Image URL', 'All Image URLs', 'Description (Plain Text)', 'Description (HTML)'];
+    rows = products.map((p) => [
+      p.id, p.name, p.brand || 'Korean Skincare', p.primaryCategory || 'Skin Care', p.sku || '', p.weight || '',
+      p.regularPrice || 0, p.salePrice || 0, p.discountPercent || 0, p.inStock === false ? 'Out of Stock' : 'In Stock',
+      p.soldCount || 0, kmcProductLink(p), kmcProductImages(p)[0] || '', kmcProductImages(p).join(' , '),
+      kmcStripHtml(p.description || ''), p.description || ''
+    ]);
+  } else if (format === 'meta') {
+    headers = ['id', 'title', 'description', 'availability', 'condition', 'price', 'link', 'image_link', 'additional_image_link', 'brand', 'google_product_category', 'fb_product_category', 'quantity_to_sell_on_facebook'];
+    rows = products.map((p) => [
+      String(p.id), (p.name || '').slice(0, 200), kmcStripHtml(p.description || p.name || '').slice(0, 5000),
+      p.inStock === false ? 'out of stock' : 'in stock', 'new', (Number(p.salePrice) || 0) + ' BDT',
+      kmcProductLink(p), kmcProductImages(p)[0] || '', kmcProductImages(p).slice(1).join(','),
+      p.brand || 'Korean Skincare', 'Health & Beauty > Personal Care > Cosmetics > Skin Care',
+      'Health & Beauty', p.inStock === false ? 0 : 999
+    ]);
+  } else if (format === 'shopify') {
+    headers = ['Handle', 'Title', 'Body (HTML)', 'Vendor', 'Type', 'Tags', 'Published', 'Variant SKU', 'Variant Grams', 'Variant Inventory Qty', 'Variant Price', 'Variant Compare At Price', 'Image Src', 'Image Alt Text', 'Status'];
+    const seen = new Set();
+    products.forEach((p) => {
+      const handle = p.slug || slugify(p.name || 'product');
+      const imgs = kmcProductImages(p);
+      const base = [handle, p.name, p.description || '', p.brand || 'Korean Skincare', p.primaryCategory || 'Skin Care', (p.brand || '') + ', Korean Skincare, Skin Care', 'TRUE', p.sku || '', '0', p.inStock === false ? '0' : '99', p.salePrice || 0, p.regularPrice || 0];
+      if (!imgs.length) {
+        rows.push([...base, '', '', 'active']);
+      } else {
+        imgs.forEach((img, idx) => {
+          if (idx === 0) {
+            rows.push([...base, img, p.name, 'active']);
+            seen.add(handle);
+          } else {
+            rows.push([handle, '', '', '', '', '', '', '', '', '', '', '', img, p.name, 'active']);
+          }
+        });
+      }
+    });
+  } else if (format === 'pricelist') {
+    headers = ['#', 'Product Name', 'Brand', 'Size / Weight', 'Regular Price', 'Sale Price', 'Discount', 'Image 1', 'Image 2', 'Image 3', 'Product Link'];
+    rows = products.map((p, i) => {
+      const imgs = kmcProductImages(p);
+      return [i + 1, p.name, p.brand || '', p.weight || '', p.regularPrice || 0, p.salePrice || 0,
+        (p.discountPercent || 0) + '%', imgs[0] || '', imgs[1] || '', imgs[2] || '', kmcProductLink(p)];
+    });
+  } else if (format === 'custom') {
+    const raw = (document.getElementById('exportCustomColumns')?.value || '').trim();
+    headers = raw
+      ? raw.split(/,|\n/).map((s) => s.trim()).filter(Boolean)
+      : ['Product Name', 'Brand', 'Sale Price', 'Image URL', 'Product Link'];
+    rows = products.map((p) => headers.map((h) => customColumnValue(h, p)));
+  } else {
+    headers = ['Product ID', 'Product Name', 'Brand', 'Sale Price', 'Image'];
+    rows = products.map((p) => [p.id, p.name, p.brand || '', p.salePrice || 0, kmcProductImages(p)[0] || '']);
+  }
+
+  return { headers, rows, products, stamp };
+}
+
+function renderExportPreview() {
+  const box = document.getElementById('exportPreview');
+  if (!box) return;
+  const format = document.getElementById('exportFormatSelect')?.value || 'full';
+  document.getElementById('customColumnsWrap')?.classList.toggle('hidden', format !== 'custom');
+
+  const { headers, rows } = buildExportTable(format);
+  const countEl = document.getElementById('exportProductCount');
+  if (countEl) countEl.textContent = rows.length + 'টি প্রোডাক্ট';
+
+  const previewRows = rows.slice(0, 5);
+  box.innerHTML =
+    '<div class="export-preview-head">👀 প্রিভিউ (প্রথম ' + previewRows.length + 'টি প্রোডাক্ট • মোট ' + rows.length + 'টি)</div>' +
+    '<div class="export-preview-scroll"><table class="export-preview-table"><thead><tr>' +
+    headers.map((h) => '<th>' + escapeHtml(h) + '</th>').join('') +
+    '</tr></thead><tbody>' +
+    previewRows
+      .map((r) => '<tr>' + r.map((c) => '<td>' + escapeHtml(String(c).slice(0, 90)) + '</td>').join('') + '</tr>')
+      .join('') +
+    '</tbody></table></div>';
+}
+
+function runExportDownload(kind) {
+  const format = document.getElementById('exportFormatSelect')?.value || 'full';
+  const { headers, rows, stamp } = buildExportTable(format);
+  if (!rows.length) {
+    showToast('কোনো প্রোডাক্ট পাওয়া যায়নি।');
+    return;
+  }
+  const base = 'korean-mart-care-' + format + '-' + stamp;
+  try {
+    if (kind === 'csv') {
+      downloadBlobFile(base + '.csv', new Blob([toCsvText(headers, rows)], { type: 'text/csv;charset=utf-8' }));
+      showToast('⬇️ CSV ফাইল ডাউনলোড শুরু হয়েছে (' + rows.length + 'টি প্রোডাক্ট)');
+    } else if (kind === 'xlsx') {
+      const blob = buildXlsxBlob(headers, rows, 'Products');
+      downloadBlobFile(base + '.xlsx', blob);
+      showToast('⬇️ Excel (.xlsx) ফাইল ডাউনলোড শুরু হয়েছে (' + rows.length + 'টি প্রোডাক্ট)');
+    } else if (kind === 'json') {
+      const objs = rows.map((r) => {
+        const o = {};
+        headers.forEach((h, i) => (o[h] = r[i]));
+        return o;
+      });
+      downloadBlobFile(base + '.json', new Blob([JSON.stringify(objs, null, 2)], { type: 'application/json;charset=utf-8' }));
+      showToast('⬇️ JSON ফাইল ডাউনলোড শুরু হয়েছে');
+    } else if (kind === 'copy') {
+      const tsv = [headers.join('\t'), ...rows.map((r) => r.map((c) => String(c).replace(/\t|\n/g, ' ')).join('\t'))].join('\n');
+      navigator.clipboard?.writeText(tsv).then(
+        () => showToast('📋 সব ডাটা কপি হয়েছে — Excel/Google Sheet-এ পেস্ট করুন!'),
+        () => showToast('কপি করা যায়নি, ডাউনলোড বাটন ব্যবহার করুন।')
+      );
+    }
+  } catch (e) {
+    showToast('ফাইল তৈরি করতে সমস্যা হয়েছে: ' + e.message);
+  }
+}
+
+/* ==================== AUTHENTICITY VERIFICATION BANNER ==================== */
+function renderAuthenticityBanner() {
+  const sec = document.getElementById('authenticBannerSection');
+  if (!sec) return;
+  const s = AppState.storeState.settings || {};
+  const enabled = s.authenticBannerEnabled !== false;
+  sec.classList.toggle('hidden', !enabled);
+  const setTxt = (id, val) => {
+    const el = document.getElementById(id);
+    if (el && val) el.textContent = val;
+  };
+  setTxt('authenticBannerBadge', s.authenticBannerBadge);
+  setTxt('authenticBannerTitle', s.authenticBannerTitle);
+  setTxt('authenticBannerSubtitle', s.authenticBannerSubtitle);
+  setTxt('authenticBannerGuarantee', s.authenticBannerGuarantee);
+  const cta = document.getElementById('authenticBannerCta');
+  if (cta && s.authenticBannerCta) cta.textContent = s.authenticBannerCta;
+  const img = document.getElementById('authenticBannerImg');
+  if (img) {
+    img.src = s.authenticBannerImage || 'images/authentic-verified-poster.jpg';
+  }
+}
+
 /* ==================== DATA INITIALIZATION & MERGING ==================== */
 async function initApp() {
   try {
@@ -174,6 +589,8 @@ async function initApp() {
     }
   } catch (e) {}
 
+  loadLocalPriceLocks();
+
   recomputeCatalog();
   renderAll();
   bindEvents();
@@ -210,6 +627,25 @@ function mergeIntoStoreState(incoming) {
   }
   if (incoming.productOverrides) {
     AppState.storeState.productOverrides = { ...AppState.storeState.productOverrides, ...incoming.productOverrides };
+  }
+  if (incoming.priceLocks && typeof incoming.priceLocks === 'object') {
+    const curLocks = AppState.storeState.priceLocks || {};
+    for (const [lockId, incomingLock] of Object.entries(incoming.priceLocks)) {
+      if (!incomingLock) continue;
+      const existingLock = curLocks[lockId];
+      const inAt = Number(incomingLock.lockedAt) || 0;
+      const exAt = Number(existingLock?.lockedAt) || 0;
+      if (!existingLock || inAt >= exAt) {
+        curLocks[lockId] = {
+          salePrice: Number(incomingLock.salePrice) || 0,
+          regularPrice: Number(incomingLock.regularPrice) || 0,
+          lockedAt: inAt || Date.now(),
+          source: incomingLock.source || 'kcbazar_old_rate'
+        };
+      }
+    }
+    AppState.storeState.priceLocks = curLocks;
+    persistPriceLocks();
   }
   if (Array.isArray(incoming.customProducts) && incoming.customProducts.length) {
     const existingIds = new Set(AppState.storeState.customProducts.map((p) => String(p.id)));
@@ -250,6 +686,7 @@ async function saveStoreState(toastText = 'পরিবর্তনগুলো 
   try {
     localStorage.setItem(STORAGE_STATE_KEY, JSON.stringify(AppState.storeState));
   } catch (e) {}
+  persistPriceLocks();
 
   recomputeCatalog();
   renderAll();
@@ -281,6 +718,7 @@ function recomputeCatalog() {
     if (deletedSet.has(idStr)) continue;
     const ov = overrides[idStr] || {};
     const prod = { ...cp, ...ov };
+    applyPriceLockToProduct(prod, idStr);
     prod.regularPrice = Number(prod.regularPrice) || Number(prod.salePrice) || 0;
     prod.salePrice = Number(prod.salePrice) || prod.regularPrice;
     prod.discountPercent =
@@ -300,6 +738,7 @@ function recomputeCatalog() {
       ...ov,
       images: Array.isArray(ov.images) ? ov.images : [...(bp.images || [])]
     };
+    applyPriceLockToProduct(prod, idStr);
     prod.regularPrice = Number(prod.regularPrice) || Number(prod.salePrice) || 0;
     prod.salePrice = Number(prod.salePrice) || prod.regularPrice;
     prod.discountPercent =
@@ -365,6 +804,7 @@ function recomputeCatalog() {
 /* ==================== RENDERING FUNCTIONS ==================== */
 function renderAll() {
   renderSiteBrandingAndSettings();
+  renderAuthenticityBanner();
   renderTopCategoryNav();
   renderSideDrawerCategories();
   renderHeroSpotlight();
@@ -1546,10 +1986,29 @@ function renderAdminDashboard() {
     dl.innerHTML = AppState.brands.map((b) => `<option value="${escapeHtml(b.name)}"></option>`).join('');
   }
 
+  const modeSel = document.getElementById('quickPriceRateModeSelect');
+  if (modeSel) modeSel.value = s.priceRateMode || 'old_kcbazar';
+  setTxt('priceLockStatsText', `🔒 ${priceLockCount()}টি প্রোডাক্টের দাম লক করা আছে`);
+
+  const expBrand = document.getElementById('exportBrandFilter');
+  const expCat = document.getElementById('exportCategoryFilter');
+  if (expBrand && expBrand.options.length <= 1) {
+    expBrand.innerHTML =
+      `<option value="all">সব ব্র্যান্ড (${AppState.brands.length})</option>` +
+      AppState.brands.map((b) => `<option value="${escapeHtml(b.slug)}">${escapeHtml(b.name)}</option>`).join('');
+  }
+  if (expCat && expCat.options.length <= 1) {
+    expCat.innerHTML =
+      `<option value="all">সব ক্যাটাগরি (${AppState.categories.length})</option>` +
+      AppState.categories.map((c) => `<option value="${escapeHtml(c.slug)}">${escapeHtml(c.name)}</option>`).join('');
+  }
+  renderExportPreview();
+
   renderAdminProductsList();
   renderAdminBrandingForm();
   renderAdminBrandsGrid();
   renderAdminOrdersList();
+  renderAuthenticityBannerAdminForm();
 }
 
 function renderAdminProductsList() {
@@ -1607,6 +2066,11 @@ function renderAdminProductsList() {
             <button type="button" class="btn-kcb-green" style="padding:7px 11px; font-size:0.78rem;" data-save-inline-price="${p.id}">
               💾 দাম সেভ
             </button>
+            <div class="price-lock-chip ${p.priceLocked ? 'locked' : ''}">
+              ${p.priceLocked
+                ? `🔒 লক করা দাম • <button type="button" class="unlock-price-btn" data-unlock-price="${p.id}">আনলক</button>`
+                : '🔓 KC Bazar রেট'}
+            </div>
           </div>
 
           <div class="admin-prod-actions">
@@ -2032,6 +2496,7 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
     const existingMap = new Map((AppState.baseCatalog.products || []).map((p) => [String(p.id), p]));
     let addedCount = 0;
     let updatedPriceCount = 0;
+    let lockedCount = 0;
 
     const useNewKcBazarRate = AppState.storeState.settings.priceRateMode === 'new_kcbazar';
 
@@ -2043,7 +2508,8 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
         existingMap.set(idStr, liveProd);
         addedCount++;
       } else {
-        if (useNewKcBazarRate) {
+        const hasLock = Boolean(priceLockOf(idStr));
+        if (useNewKcBazarRate && !hasLock) {
           if (oldProd.salePrice !== liveProd.salePrice || oldProd.regularPrice !== liveProd.regularPrice) {
             updatedPriceCount++;
           }
@@ -2056,7 +2522,8 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
             images: liveProd.images?.length ? liveProd.images : oldProd.images
           });
         } else {
-          // Preserve KC Bazar previous rate (old salePrice / regularPrice / discountPercent)
+          // 🔒 Price lock active: KC Bazar-এর নতুন দাম আর কখনো আগের দামকে বদলাবে না
+          if (hasLock) lockedCount++;
           Object.assign(oldProd, {
             inStock: liveProd.inStock,
             soldCount: liveProd.soldCount || oldProd.soldCount,
@@ -2071,7 +2538,7 @@ async function autoSyncWithKcBazarLive(fullSync = false, notifyUser = false) {
 
     const syncTime = new Date(data.syncedAt || Date.now()).toLocaleTimeString('bn-BD');
     if (statusEl) {
-      statusEl.textContent = `✅ সর্বশেষ Auto-Sync: ${syncTime} (${liveItems.length}টি KC Bazar প্রোডাক্ট চেক হয়েছে — নতুন: ${addedCount}টি, দাম/স্টক আপডেট: ${updatedPriceCount}টি)`;
+      statusEl.textContent = `✅ সর্বশেষ Auto-Sync: ${syncTime} (${liveItems.length}টি প্রোডাক্ট চেক — নতুন: ${addedCount}টি, দাম আপডেট: ${updatedPriceCount}টি, 🔒 লক করা দাম অপরিবর্তিত: ${lockedCount}টি)`;
     }
     if (notifyUser) {
       await saveStoreState(`🔄 KC Bazar Auto-Sync সম্পন্ন! (নতুন প্রোডাক্ট: ${addedCount}টি, দাম/স্টক আপডেট: ${updatedPriceCount}টি)`);
@@ -2468,6 +2935,14 @@ function bindEvents() {
       return;
     }
 
+    const unlockBtn = e.target.closest('[data-unlock-price]');
+    if (unlockBtn) {
+      const pid = unlockBtn.getAttribute('data-unlock-price');
+      removePriceLock(pid);
+      saveStoreState('🔓 এই প্রোডাক্টের দাম আনলক হয়েছে — এখন KC Bazar-এর রেট অনুযায়ী চলবে।');
+      return;
+    }
+
     const saveInlineBtn = e.target.closest('[data-save-inline-price]');
     if (saveInlineBtn) {
       const pid = saveInlineBtn.getAttribute('data-save-inline-price');
@@ -2482,6 +2957,7 @@ function bindEvents() {
           salePrice: newSale,
           regularPrice: Math.max(newReg, newSale)
         };
+        setPriceLock(pid, newSale, Math.max(newReg, newSale), 'owner');
         saveStoreState('💰 প্রোডাক্টের নতুন দাম আপডেট হয়েছে!');
       }
       return;
@@ -2614,6 +3090,7 @@ function bindEvents() {
         description,
         images
       };
+      setPriceLock(idVal, salePrice, regularPrice, 'owner');
     } else {
       const newId = Date.now();
       AppState.storeState.customProducts.unshift({
@@ -2707,6 +3184,105 @@ function bindEvents() {
     }
 
     await saveStoreState('✅ লোগো, রানিং ব্যানার, ফন্ট ও ডেলিভারি চার্জ সফলভাবে সেভ ও আপডেট হয়েছে!');
+  });
+
+
+  /* ---------- PRICE RATE MODE (KC Bazar আগের রেট লক / নতুন রেট) ---------- */
+  document.getElementById('quickPriceRateModeSelect')?.addEventListener('change', async (e) => {
+    const mode = e.target.value;
+    const s = AppState.storeState.settings;
+    if (mode === 'new_kcbazar') {
+      const ok = window.confirm(
+        'সতর্কতা: KC Bazar-এর বর্তমান নতুন রেট চালু করলে আপনার সব প্রোডাক্টের লক করা (আগের) দাম মুছে যাবে এবং KC Bazar-এর আজকের দাম দেখাবে। আপনি কি নিশ্চিত?'
+      );
+      if (!ok) {
+        e.target.value = s.priceRateMode || 'old_kcbazar';
+        return;
+      }
+      AppState.storeState.priceLocks = {};
+      const ovs = AppState.storeState.productOverrides || {};
+      for (const [oid, ov] of Object.entries(ovs)) {
+        if (ov && (Object.prototype.hasOwnProperty.call(ov, 'salePrice') || Object.prototype.hasOwnProperty.call(ov, 'regularPrice'))) {
+          delete ov.salePrice;
+          delete ov.regularPrice;
+          if (!Object.keys(ov).length) delete ovs[oid];
+        }
+      }
+      persistPriceLocks();
+      s.priceRateMode = 'new_kcbazar';
+      await saveStoreState('🔄 KC Bazar-এর বর্তমান নতুন রেট চালু হয়েছে!');
+      autoSyncWithKcBazarLive(true, true);
+      return;
+    }
+    s.priceRateMode = 'old_kcbazar';
+    if (priceLockCount() === 0) {
+      const total = await relockPricesFromKcBazarOldRate(true);
+      if (total) showToast(`🔒 ${total}টি প্রোডাক্টে KC Bazar-এর আগের রেট লক করা হয়েছে!`);
+    }
+    await saveStoreState('🔒 KC Bazar-এর আগের রেট লক করা আছে — Auto-Sync দাম বদলাতে পারবে না।');
+  });
+
+  document.getElementById('restoreOldRatesBtn')?.addEventListener('click', async () => {
+    const ok = window.confirm('KC Bazar-এর আগের (কম) রেট আবার সব প্রোডাক্টে ফিরিয়ে আনতে চান?');
+    if (!ok) return;
+    const total = await relockPricesFromKcBazarOldRate(true);
+    if (!total) {
+      showToast('আগের রেট ফিরিয়ে আনতে সমস্যা হয়েছে।');
+      return;
+    }
+    AppState.storeState.settings.priceRateMode = 'old_kcbazar';
+    await saveStoreState(`🔒 ${total}টি প্রোডাক্টে KC Bazar-এর আগের রেট আবার লক ও সেভ হয়েছে!`);
+    renderAdminProductsList();
+  });
+
+  /* ---------- PRODUCT DATA EXPORT (ADS / ONLINE STORE) ---------- */
+  ['exportFormatSelect', 'exportBrandFilter', 'exportCategoryFilter'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('change', renderExportPreview);
+  });
+  document.getElementById('exportCustomColumns')?.addEventListener('input', () => {
+    window.clearTimeout(window.__kmcExportPreviewTimer);
+    window.__kmcExportPreviewTimer = window.setTimeout(renderExportPreview, 400);
+  });
+  document.getElementById('exportCsvBtn')?.addEventListener('click', () => runExportDownload('csv'));
+  document.getElementById('exportXlsxBtn')?.addEventListener('click', () => runExportDownload('xlsx'));
+  document.getElementById('exportJsonBtn')?.addEventListener('click', () => runExportDownload('json'));
+  document.getElementById('exportCopyBtn')?.addEventListener('click', () => runExportDownload('copy'));
+
+  /* ---------- AUTHENTICITY BANNER CONTROLS ---------- */
+  document.getElementById('authenticBannerFileInput')?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await fileToOptimizedDataUrl(file, 1100, 0.86);
+      AppState.storeState.settings.authenticBannerImage = dataUrl;
+      renderAuthenticityBanner();
+      renderAuthenticityBannerAdminForm();
+      showToast('🖼️ নতুন ব্যানার ছবি আপলোড হয়েছে — এখন "ব্যানার সেভ করুন" চাপুন।');
+    } catch (err) {
+      showToast('ছবি আপলোড করা যায়নি।');
+    }
+  });
+
+  document.getElementById('saveAuthenticBannerBtn')?.addEventListener('click', async () => {
+    const s = AppState.storeState.settings;
+    const val = (id) => document.getElementById(id)?.value.trim();
+    s.authenticBannerEnabled = Boolean(document.getElementById('authenticBannerEnabledToggle')?.checked);
+    s.authenticBannerBadge = val('authenticBannerBadgeInput') || s.authenticBannerBadge;
+    s.authenticBannerTitle = val('authenticBannerTitleInput') || s.authenticBannerTitle;
+    s.authenticBannerSubtitle = val('authenticBannerSubtitleInput') || s.authenticBannerSubtitle;
+    s.authenticBannerGuarantee = val('authenticBannerGuaranteeInput') || s.authenticBannerGuarantee;
+    s.authenticBannerCta = val('authenticBannerCtaInput') || s.authenticBannerCta;
+    const imgUrl = val('authenticBannerUrlInput');
+    if (imgUrl) s.authenticBannerImage = imgUrl;
+    renderAuthenticityBanner();
+    await saveStoreState('🛡️ অথেনটিক ভেরিফাইড ব্যানার সেভ হয়েছে!');
+  });
+
+  document.getElementById('resetAuthenticBannerImgBtn')?.addEventListener('click', async () => {
+    AppState.storeState.settings.authenticBannerImage = 'images/authentic-verified-poster.jpg';
+    renderAuthenticityBanner();
+    renderAuthenticityBannerAdminForm();
+    showToast('♻️ ডিফল্ট ভেরিফিকেশন ব্যানার ছবি ফিরিয়ে আনা হয়েছে — সেভ করুন।');
   });
 
   document.querySelectorAll('[data-jump-tab]').forEach((card) => {
@@ -2999,3 +3575,47 @@ function renderAllBrandsModalGrid(query = '') {
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
+
+/* ==================== AUTHENTICITY BANNER ADMIN FORM SYNC ==================== */
+function renderAuthenticityBannerAdminForm() {
+  const s = AppState.storeState.settings || {};
+  const clean = (v) => String(v || '').replace(/\s+/g, ' ').trim();
+  const setVal = (id, v) => {
+    const el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = v || '';
+  };
+
+  const toggle = document.getElementById('authenticBannerEnabledToggle');
+  if (toggle) toggle.checked = s.authenticBannerEnabled !== false;
+
+  if (!s.authenticBannerTitle) {
+    s.authenticBannerTitle = clean(document.getElementById('authenticBannerTitle')?.textContent) ||
+      'আমাদের সব প্রোডাক্ট অফিশিয়ালি ভেরিফাইড প্রুফ সহ পাবেন';
+  }
+  if (!s.authenticBannerSubtitle) {
+    s.authenticBannerSubtitle = clean(document.getElementById('authenticBannerSubtitle')?.textContent) ||
+      'প্রতিটি প্রোডাক্টের গায়ে থাকে অরিজিনাল হলোগ্রাম QR স্টিকার।';
+  }
+  if (!s.authenticBannerBadge) {
+    s.authenticBannerBadge = clean(document.getElementById('authenticBannerBadge')?.textContent) ||
+      '🛡️ 100% AUTHENTIC · OFFICIAL SCAN VERIFIED';
+  }
+  if (!s.authenticBannerGuarantee) {
+    s.authenticBannerGuarantee = clean(document.getElementById('authenticBannerGuarantee')?.textContent) ||
+      '✅ ফেক প্রমাণ করতে পারলে ডাবল টাকা ক্যাশব্যাক!';
+  }
+  if (!s.authenticBannerCta) {
+    s.authenticBannerCta = clean(document.getElementById('authenticBannerCta')?.textContent) ||
+      'ভেরিফাইড প্রোডাক্টগুলো দেখুন';
+  }
+
+  setVal('authenticBannerBadgeInput', s.authenticBannerBadge);
+  setVal('authenticBannerTitleInput', s.authenticBannerTitle);
+  setVal('authenticBannerSubtitleInput', s.authenticBannerSubtitle);
+  setVal('authenticBannerGuaranteeInput', s.authenticBannerGuarantee);
+  setVal('authenticBannerCtaInput', s.authenticBannerCta);
+  setVal('authenticBannerUrlInput', String(s.authenticBannerImage || '').startsWith('data:') ? '' : s.authenticBannerImage || '');
+
+  const prev = document.getElementById('authenticBannerAdminPreview');
+  if (prev) prev.src = s.authenticBannerImage || 'images/authentic-verified-poster.jpg';
+}

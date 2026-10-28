@@ -19,6 +19,31 @@ const EXCLUDE_KEYWORDS = [
   'body wash', 'shower gel', 'body lotion', 'toothpaste', 'toothbrush', 'perfume'
 ];
 
+function cleanDescriptionHtml(html = '') {
+  if (!html) return '';
+  let out = String(html);
+  out = out.replace(/<(script|style)[\s\S]*?<\/\1>/gi, '');
+  out = out.replace(/<!--[\s\S]*?-->/g, '');
+  out = out.replace(/\s(style|class|id|data-[\w-]+)="[^"]*"/gi, '');
+  out = out.replace(/<(h[1-6])[^>]*>/gi, '<p><strong>');
+  out = out.replace(/<\/h[1-6]>/gi, '</strong></p>');
+  out = out.replace(/<figure[\s\S]*?<\/figure>/gi, '');
+  out = out.replace(/<img[^>]*>/gi, '');
+  out = out.replace(/<(div|section|article|span)[^>]*>/gi, '');
+  out = out.replace(/<\/(div|section|article|span)>/gi, '');
+  out = out.replace(/<p>\s*<\/p>/g, '');
+  out = out.replace(/<li>\s*<\/li>/g, '');
+  out = out.replace(/>\s+</g, '><');
+  out = out.replace(/[ \t]{2,}/g, ' ');
+  out = out.replace(/<br\s*\/?>/gi, '<br>').trim();
+  if (out.length > 2200) {
+    const cut = out.lastIndexOf('</', 2200);
+    out = out.slice(0, cut > 800 ? cut : 2200).trim();
+    out = out.replace(/<[^>]*$/, '');
+  }
+  return out;
+}
+
 function stripFreeDelivery(html = '') {
   if (!html) return '';
   return html
@@ -105,7 +130,7 @@ function parseKcbazarProduct(raw) {
     primaryCategory: specificCat.name,
     primaryCategorySlug: specificCat.slug,
     weight,
-    description: stripFreeDelivery(raw.description || ''),
+    description: cleanDescriptionHtml(stripFreeDelivery(raw.description || '')),
     kcbazarUrl: raw.permalink || `https://kcbazar.com/product/${raw.slug}/`
   };
 }

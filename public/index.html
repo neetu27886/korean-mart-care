@@ -18,88 +18,109 @@
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body id="top">
-  <!-- Top Promo Countdown Bar (Exact Match to IMG_7829.png — Never Breaks or Wraps) -->
-  <div class="top-marquee-bar" id="topPromoBar">
-    <div class="kcb-top-promo-inner">
-      <span class="kcb-promo-occasion" id="announcementTextPrimary">🎂 মেগা ডিসকাউন্ট</span>
-      <span class="kcb-live-pill"><span class="kcb-live-dot"></span> LIVE</span>
-      <div class="kcb-countdown-timer" id="kcbLiveCountdown">
-        <div class="kcb-cd-unit"><strong id="cdHours">08</strong><small>Hours</small></div>
-        <span class="kcb-cd-sep">:</span>
-        <div class="kcb-cd-unit"><strong id="cdMins">32</strong><small>Mins</small></div>
-        <span class="kcb-cd-sep">:</span>
-        <div class="kcb-cd-unit"><strong id="cdSecs">55</strong><small>Secs</small></div>
+  <!-- Top Live Running Pink Marquee Banner with White Text -->
+  <div class="top-marquee-bar">
+    <div class="marquee-viewport">
+      <div class="marquee-track">
+        <span class="marquee-item" id="announcementTextPrimary">
+          ✨ Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা) ✨
+        </span>
+        <span class="marquee-divider">★</span>
+        <span class="marquee-item" id="announcementTextDuplicate">
+          ✨ Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা) ✨
+        </span>
       </div>
-      <span id="announcementTextDuplicate" class="hidden"></span>
     </div>
   </div>
 
-  <!-- Main Sticky White Header (Exact Match to IMG_7829.png: 2 Clean Rows) -->
+  <!-- Main Sticky Header with Dedicated Prominent Logo Showcase Space -->
   <header class="site-header" id="siteHeader">
-    <!-- Row 1: Left Hamburger [☰] | Center [Circular Logo + KOREAN MART CARE] | Right Headset [🎧] -->
-    <div class="container kcb-header-top-row">
-      <button type="button" class="kcb-hamburger-btn" id="openSideMenuBtn" aria-label="Open Categories & Menu">
+    <div class="container header-main-row">
+      <!-- Hamburger Menu Trigger (Opens Left Slide-Out CATEGORIES | MENU Drawer) -->
+      <button type="button" class="header-menu-trigger" id="openSideMenuBtn" aria-label="Open Categories & Menu">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="3" y1="6" x2="21" y2="6"></line>
           <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
+          <line x1="3" y1="18" x2="16" y2="18"></line>
         </svg>
       </button>
 
-      <a href="#top" class="kcb-center-brand" id="brandHomeLink">
-        <div class="kcb-circle-logo-badge" id="headerLogoWrap">
+      <!-- Dedicated Prominent Brand Logo Showcase Space -->
+      <a href="#top" class="brand-identity" id="brandHomeLink">
+        <div class="brand-logo-showcase-frame" id="headerLogoWrap">
           <div class="default-kcb-logo" id="defaultLogoSvg">
-            <span class="logo-pink">KMC</span>
+            <span class="logo-pink">KOREAN</span>
+            <span class="logo-dark">MART CARE</span>
           </div>
           <img id="customLogoImg" class="custom-logo-img hidden" src="" alt="Korean Mart Care Logo" />
         </div>
-        <span class="kcb-brand-wordmark" id="headerSiteName">KOREAN MART CARE</span>
-        <span class="hidden" id="headerTagline">100% Authentic Korean Skincare</span>
+        <div class="brand-text-wrap">
+          <span class="brand-title" id="headerSiteName">Korean Mart Care</span>
+          <span class="brand-subtitle" id="headerTagline">100% Authentic Korean Skincare</span>
+        </div>
       </a>
 
-      <div class="kcb-header-right-icons">
-        <a href="https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr" target="_blank" rel="noopener" class="kcb-headset-btn" id="headerSupportLink" title="Customer Support">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
-            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-          </svg>
-        </a>
-        <button type="button" class="header-icon-btn hidden" id="openBrandsModalBtn" title="Korean Brands"></button>
-        <button type="button" class="header-icon-btn hidden" id="openWishlistBtn" title="Wishlist">
-          <span class="kcb-count-badge" id="wishlistCountBadge">0</span>
-        </button>
-        <button type="button" class="header-icon-btn hidden" id="openCartBtn" title="Shopping Cart">
-          <span class="kcb-count-badge" id="cartCountBadge">0</span>
-        </button>
-        <button type="button" class="control-app-btn hidden" id="toggleControlAppBtn" title="Open Control App">
-          <span>📱 Control App</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Row 2: Full-Width Pill Search Bar with Pink Circular Button (Exact Match to IMG_7829.png) -->
-    <div class="container kcb-header-search-row">
+      <!-- Desktop Search Bar -->
       <div class="header-search-wrap">
-        <div class="kcb-pill-search-box">
+        <div class="kcb-search-box">
           <input
             type="search"
             id="globalSearchInput"
-            placeholder="Search for products"
+            placeholder="Search for Korean skincare products, brands..."
             autocomplete="off"
           />
           <button type="button" id="clearSearchBtn" class="clear-search-btn hidden" aria-label="Clear search">✕</button>
-          <button type="button" class="kcb-pill-search-btn" id="searchSubmitBtn" aria-label="Search">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <circle cx="11" cy="11" r="7"></circle>
-              <line x1="20" y1="20" x2="16" y2="16"></line>
+          <button type="button" class="kcb-search-submit-btn" id="searchSubmitBtn" aria-label="Search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <circle cx="11" cy="11" r="7.5"></circle>
+              <line x1="20" y1="20" x2="16.2" y2="16.2"></line>
             </svg>
           </button>
         </div>
         <div id="searchDropdown" class="search-dropdown hidden"></div>
       </div>
+
+      <!-- Right Icons (Support Headset, Brands, Wishlist, Cart, Control App) -->
+      <div class="header-actions">
+        <a href="https://wa.me/8801700000000" target="_blank" rel="noopener" class="header-icon-btn" id="headerSupportLink" title="Customer Care">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+            <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+          </svg>
+        </a>
+
+        <button type="button" class="header-icon-btn" id="openBrandsModalBtn" title="Korean Brands">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+            <line x1="7" y1="7" x2="7.01" y2="7"></line>
+          </svg>
+          <span class="action-label">Brands</span>
+        </button>
+
+        <button type="button" class="header-icon-btn" id="openWishlistBtn" title="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="kcb-count-badge" id="wishlistCountBadge">0</span>
+        </button>
+
+        <button type="button" class="header-icon-btn" id="openCartBtn" title="Shopping Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <span class="kcb-count-badge" id="cartCountBadge">0</span>
+        </button>
+
+        <button type="button" class="control-app-btn" id="toggleControlAppBtn" title="Open Control App">
+          <span>📱 Control App</span>
+        </button>
+      </div>
     </div>
 
-    <nav class="category-nav-bar hidden">
+    <!-- Horizontal Skin Care Subcategory Strip -->
+    <nav class="category-nav-bar">
       <div class="container category-nav-scroll" id="topCategoryNav"></div>
     </nav>
   </header>
@@ -176,120 +197,119 @@
 
   <!-- ==================== STOREFRONT VIEW ==================== -->
   <main id="storefrontView" class="storefront-view">
-    <!-- Full-Width Clean Hero Banner Slider (Exact Match to IMG_7829.png) -->
-    <section class="kcb-hero-slider-section">
-      <div class="container kcb-hero-slider-container">
-        <div class="kcb-banner-slider" id="kcbHeroBannerSlider">
-          <div class="kcb-banner-track" id="kcbHeroBannerTrack">
-            <!-- Slide 1: Mega Discount Skin Care Banner -->
-            <div class="kcb-banner-slide active" data-slide-idx="0">
-              <img
-                src="https://kcbazar.com/wp-content/uploads/2026/09/1-NATURE-SKIN.jpg"
-                alt="Korean Mart Care — 100% Authentic Korean Skincare"
-                fetchpriority="high"
-              />
-              <div class="kcb-banner-delivery-tag" id="heroDeliveryBadgeTitle">🚚 সারা বাংলাদেশে ডেলিভারি ৳110</div>
+    <!-- Promotional & Featured Product Hero Banner (KC Bazar Pink/Blue/White Style) -->
+    <section class="kcb-hero-section">
+      <div class="container kcb-hero-grid">
+        <!-- Left Promo Banner -->
+        <div class="kcb-promo-banner">
+          <div class="kcb-promo-pill">🇰🇷 100% AUTHENTIC KOREAN SKINCARE</div>
+          <h1 class="kcb-promo-title" id="heroHeading">Korean Mart Care — Original Skin Care Collection</h1>
+          <p class="kcb-promo-sub" id="heroSubheading">
+            দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অরিজিনাল স্কিনকেয়ার প্রোডাক্ট। ডেলিভারি ম্যানের সামনে পণ্য চেক করে রিসিভ করার সুবিধা!
+          </p>
+
+          <!-- 2x2 Green Feature Box (Exact Match to IMG_7790.png - With Delivery ৳110 instead of Free Delivery) -->
+          <div class="kcb-green-trust-box">
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                <path d="M9 3v6h6V3"></path>
+              </svg>
+              <span>We imported this</span>
             </div>
-            <!-- Slide 2: Forest Korean Skincare -->
-            <div class="kcb-banner-slide" data-slide-idx="1">
-              <img
-                src="https://kcbazar.com/wp-content/uploads/2026/09/2-FOREST.jpg"
-                alt="Korean Forest Skincare Collection"
-                loading="lazy"
-              />
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+              <span>100% Authentic</span>
             </div>
-            <!-- Slide 3: Dabo Korean Skincare -->
-            <div class="kcb-banner-slide" data-slide-idx="2">
-              <img
-                src="https://kcbazar.com/wp-content/uploads/2026/09/3-DABO.jpg"
-                alt="Dabo Korean Skincare Collection"
-                loading="lazy"
-              />
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              <span id="heroDeliveryBadgeTitle">Delivery ৳110</span>
+            </div>
+            <div class="kcb-trust-item">
+              <svg class="kcb-green-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+              <span>2-3 Days Delivery</span>
             </div>
           </div>
 
-          <button type="button" class="kcb-banner-arrow prev" id="heroSlidePrev" aria-label="Previous slide">‹</button>
-          <button type="button" class="kcb-banner-arrow next" id="heroSlideNext" aria-label="Next slide">›</button>
-
-          <div class="kcb-banner-dots-pill" id="heroSlideDots">
-            <button type="button" class="kcb-b-dot active" data-hero-dot="0" aria-label="Slide 1"></button>
-            <button type="button" class="kcb-b-dot" data-hero-dot="1" aria-label="Slide 2"></button>
-            <button type="button" class="kcb-b-dot" data-hero-dot="2" aria-label="Slide 3"></button>
+          <div class="kcb-hero-btns">
+            <a href="#catalogSection" class="btn-kcb-pink">সব স্কিনকেয়ার প্রোডাক্ট দেখুন</a>
+            <button type="button" class="btn-kcb-green" id="heroFeaturedProductBtn">
+              Beauty of Joseon Sun Stick দেখুন
+            </button>
           </div>
         </div>
-        <span id="heroHeading" class="hidden"></span>
-        <span id="heroSubheading" class="hidden"></span>
-        <div id="heroSpotlightWrap" class="hidden"></div>
+
+        <!-- Right Featured Product Card (User's Linked Beauty of Joseon Matte Sun Stick) -->
+        <div id="heroSpotlightWrap" class="kcb-spotlight-wrap"></div>
       </div>
     </section>
 
-    <!-- "Skin Care" Category Showcase Cards (Exact Match to IMG_7829.png) -->
-    <section class="kcb-skincare-showcase-section">
+    <!-- Authenticity Proof Banner — Big Screen (Official Scan Verified) -->
+    <section class="authentic-banner-section" id="authenticBannerSection">
       <div class="container">
-        <h2 class="kcb-main-cat-title">Skin Care</h2>
+        <div class="authentic-banner-card">
+          <div class="authentic-banner-copy">
+            <span class="authentic-badge" id="authenticBannerBadge">🛡️ 100% AUTHENTIC · OFFICIAL SCAN VERIFIED</span>
+            <h2 class="authentic-title" id="authenticBannerTitle">
+              আমাদের সব প্রোডাক্ট অফিশিয়ালি ভেরিফাইড প্রুফ সহ পাবেন
+            </h2>
+            <p class="authentic-sub" id="authenticBannerSubtitle">
+              প্রতিটি প্রোডাক্টের গায়ে থাকে অরিজিনাল হলোগ্রাম QR স্টিকার। অফিশিয়াল সাইটে স্ক্যান করে যাচাই করে তারপর ডেলিভারি ম্যানের সামনে রিসিভ করুন — কোনো ঝুঁকি নেই।
+            </p>
 
-        <div class="kcb-skincare-cards-grid">
-          <!-- Card 1: SKIN CARE SOLUTION -->
-          <div class="kcb-sc-card">
-            <div class="kcb-sc-card-img" data-cat-jump="all">
-              <img
-                src="https://kcbazar.com/wp-content/uploads/2026/10/skin-care-solution-300x300.jpg.webp"
-                alt="Skin Care Solution"
-                loading="eager"
-              />
+            <ol class="authentic-steps">
+              <li>
+                <span class="authentic-step-num">01</span>
+                <div class="authentic-step-body">
+                  <strong>হলোগ্রাফিক QR স্টিকার খুঁজুন</strong>
+                  <span>প্রোডাক্টের বক্স/প্যাকেটে থাকা অফিশিয়াল সিল</span>
+                </div>
+              </li>
+              <li>
+                <span class="authentic-step-num">02</span>
+                <div class="authentic-step-body">
+                  <strong>প্রোডাক্টের ডিটেইলস যাচাই করুন</strong>
+                  <span>ব্র্যান্ডের নাম, সিরিয়াল ও ব্যাচের তথ্য মিলিয়ে নিন</span>
+                </div>
+              </li>
+              <li>
+                <span class="authentic-step-num">03</span>
+                <div class="authentic-step-body">
+                  <strong>অফিশিয়াল সাইটে কনফার্ম করুন</strong>
+                  <span>স্ক্যান করে অরিজিনাল লেখা দেখলেই নিশ্চিন্ত</span>
+                </div>
+              </li>
+            </ol>
+
+            <div class="authentic-guarantee" id="authenticBannerGuarantee">
+              ✅ আগে স্ক্যান করবেন, তারপর রিসিভ করবেন — ফেক প্রমাণ করতে পারলে ডাবল টাকা ক্যাশব্যাক!
             </div>
-            <div class="kcb-sc-card-body">
-              <h3 class="kcb-sc-card-heading" data-cat-jump="all">SKIN CARE SOLUTION</h3>
-              <ul class="kcb-sc-sublist">
-                <li><button type="button" data-cat-jump="cleanser">Cleanser</button></li>
-                <li><button type="button" data-cat-jump="cotton-pads">Cotton Pads</button></li>
-                <li><button type="button" data-cat-jump="toner">Toner</button></li>
-                <li><button type="button" data-cat-jump="serum-essence-ampoule">Serum-Essence-Ampoule</button></li>
-                <li><button type="button" data-cat-jump="sunscreen">Sunscreen</button></li>
-                <li><button type="button" data-cat-jump="sheet-mask">Sheet Mask</button></li>
-                <li><button type="button" data-cat-jump="cleansing-oil">Cleansing Oil</button></li>
-              </ul>
-            </div>
+
+            <a class="btn-kcb-green authentic-cta" id="authenticBannerCta" href="#catalogSection">
+              ভেরিফাইড প্রোডাক্টগুলো দেখুন
+            </a>
           </div>
 
-          <!-- Card 2: MELASMA SOLUTION -->
-          <div class="kcb-sc-card">
-            <div class="kcb-sc-card-img" data-cat-jump="melasma-cream">
-              <img
-                src="https://kcbazar.com/wp-content/uploads/2026/10/Melasma-solution-300x300.jpg.webp"
-                alt="Melasma Solution"
-                loading="lazy"
-              />
-            </div>
-            <div class="kcb-sc-card-body">
-              <h3 class="kcb-sc-card-heading" data-cat-jump="melasma-cream">MELASMA SOLUTION</h3>
-              <ul class="kcb-sc-sublist">
-                <li><button type="button" data-cat-jump="melasma-cream">Melasma Cream</button></li>
-                <li><button type="button" data-cat-jump="melasma-serum">Melasma Serum</button></li>
-                <li><button type="button" data-cat-jump="melasma-toner">Melasma Toner</button></li>
-                <li><button type="button" data-cat-jump="combo-set">Melasma Combo</button></li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Card 3: CREAM -->
-          <div class="kcb-sc-card">
-            <div class="kcb-sc-card-img" data-cat-jump="moisturizer">
-              <img
-                src="https://kcbazar.com/wp-content/uploads/2026/10/cream-300x300.jpg.webp"
-                alt="Cream & Moisturizer"
-                loading="lazy"
-              />
-            </div>
-            <div class="kcb-sc-card-body">
-              <h3 class="kcb-sc-card-heading" data-cat-jump="moisturizer">CREAM</h3>
-              <ul class="kcb-sc-sublist">
-                <li><button type="button" data-cat-jump="day-cream">Day Cream</button></li>
-                <li><button type="button" data-cat-jump="moisturizer">Moisturizer</button></li>
-                <li><button type="button" data-cat-jump="night-cream">Night Cream</button></li>
-                <li><button type="button" data-cat-jump="soothing-gel">Soothing Gel</button></li>
-              </ul>
-            </div>
+          <div class="authentic-banner-media">
+            <img
+              id="authenticBannerImg"
+              src="images/authentic-verified-poster.jpg"
+              alt="Korean Mart Care 100% Authentic — Official Scan Verified verification guide"
+              loading="lazy"
+            />
+            <div class="authentic-media-ribbon">⚡ প্রতিটি অর্ডার ভেরিফাইড</div>
           </div>
         </div>
       </div>
@@ -511,6 +531,32 @@
           <input type="text" id="quickAnnouncementInput" class="admin-input" placeholder="উপরের রানিং ব্যানারের লেখা এখানে পরিবর্তন করুন..." />
         </div>
 
+        <!-- PRICE RATE LOCK (KC Bazar আগের রেট) -->
+        <div class="price-rate-lock-box">
+          <div class="price-rate-lock-head">
+            <div>
+              <strong>💰 প্রোডাক্ট প্রাইস রেট (KC Bazar আগের রেট বনাম নতুন রেট)</strong>
+              <span>Auto-Sync চালু থাকলেও আপনার আগের দাম/নিজের এডিট করা দাম কখনো বদলাবে না।</span>
+            </div>
+            <span class="price-lock-stats" id="priceLockStatsText">🔒 দাম লক করা আছে</span>
+          </div>
+          <div class="form-row-2" style="align-items:end;">
+            <div class="form-group" style="margin-bottom:6px;">
+              <label>দামের মোড সিলেক্ট করুন:</label>
+              <select id="quickPriceRateModeSelect" class="admin-select">
+                <option value="old_kcbazar">🔒 KC Bazar-এর আগের রেট রাখুন (Old Discounted Rate — দাম বদলাবে না)</option>
+                <option value="new_kcbazar">🔄 KC Bazar-এর বর্তমান নতুন রেট নিন (Auto-Sync দাম আপডেট করবে)</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:6px;">
+              <button type="button" class="btn-kcb-outline" id="restoreOldRatesBtn" style="width:100%; background:#fff;">
+                🔒 KC Bazar-এর আগের কম দাম আবার ফিরিয়ে আনুন
+              </button>
+            </div>
+          </div>
+        </div>
+
+
         <div class="form-row-2" style="align-items:end; margin-top:4px;">
           <div class="form-group" style="margin-bottom:6px;">
             <label>☁️ ক্লাউড সিঙ্ক (GitHub Token `ghp_...` একবার বসালেই অটো সিঙ্ক হবে):</label>
@@ -522,6 +568,63 @@
             </button>
           </div>
         </div>
+      </div>
+
+      <!-- ============ PRODUCT DATA DOWNLOAD / EXPORT (ADS & ONLINE STORE) ============ -->
+      <div class="admin-panel-card export-card" id="productExportCard">
+        <div class="export-head">
+          <div>
+            <h2>📥 প্রোডাক্ট ডাটা ডাউনলোড — Ads / Online Store (CSV • Excel • JSON)</h2>
+            <p class="panel-subtext">
+              অনলাইন স্টোর বা ফেসবুক/ইনস্টাগ্রাম অ্যাডে প্রোডাক্ট লিস্ট দেওয়ার জন্য সব ডিটেইলস + সব ছবির লিংক সহ ফাইল ডাউনলোড করুন।
+              আপনার স্টোরের যে কলাম ফরম্যাট লাগবে সেটি <strong>কাস্টম কলাম</strong>-এ বসিয়ে হুবহু ওই ফরম্যাটে ডাউনলোড নিতে পারবেন।
+            </p>
+          </div>
+          <span class="export-count-badge" id="exportProductCount">0টি প্রোডাক্ট</span>
+        </div>
+
+        <div class="form-row-3">
+          <div class="form-group">
+            <label>📄 ফাইল ফরম্যাট (Format)</label>
+            <select id="exportFormatSelect" class="admin-select">
+              <option value="full">Full Product Sheet — সব ডিটেইলস + ছবি (Recommended)</option>
+              <option value="meta">Facebook / Instagram Shop Catalog (Meta CSV)</option>
+              <option value="shopify">Shopify Product Import CSV</option>
+              <option value="pricelist">Price List — ছবি + দাম (Ads / WhatsApp / Messenger)</option>
+              <option value="custom">কাস্টম কলাম — আপনার স্টোরের ফরম্যাট বসান</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>🏷️ ব্র্যান্ড ফিল্টার</label>
+            <select id="exportBrandFilter" class="admin-select">
+              <option value="all">সব ব্র্যান্ড</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>📂 ক্যাটাগরি ফিল্টার</label>
+            <select id="exportCategoryFilter" class="admin-select">
+              <option value="all">সব ক্যাটাগরি</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group hidden" id="customColumnsWrap">
+          <label>✍️ আপনার অনলাইন স্টোরের কলাম হেডারগুলো কমা (,) দিয়ে লিখুন বা পেস্ট করুন</label>
+          <textarea id="exportCustomColumns" class="admin-input" rows="3" placeholder="Product Name, Brand, Sale Price, Image URL, Product Link"></textarea>
+          <span class="field-hint">
+            উদাহরণ: <em>name, price, image_link, description, sku</em> — এই নামগুলোর সাথে মিলিয়ে ডাটা বসিয়ে দেওয়া হবে
+            (name/title, price/sale, image, brand, sku, link, category, stock, weight, description সাপোর্টেড)।
+          </span>
+        </div>
+
+        <div class="export-actions">
+          <button type="button" class="btn-kcb-green" id="exportCsvBtn">⬇️ CSV ডাউনলোড</button>
+          <button type="button" class="btn-kcb-pink" id="exportXlsxBtn">⬇️ Excel (.xlsx) ডাউনলোড</button>
+          <button type="button" class="btn-kcb-outline" id="exportJsonBtn">⬇️ JSON</button>
+          <button type="button" class="btn-kcb-outline" id="exportCopyBtn">📋 কপি করুন</button>
+        </div>
+
+        <div class="export-preview" id="exportPreview"></div>
       </div>
 
       <!-- Quick Stats Row (2x2 Compact Grid on Mobile) -->
@@ -690,6 +793,68 @@
                 <button type="submit" class="btn-kcb-pink btn-lg">💾 সব সেটিংস সেভ ও আপডেট করুন</button>
               </div>
             </form>
+          </div>
+        </div>
+
+        <!-- AUTHENTICITY VERIFICATION BANNER CONTROL -->
+        <div class="admin-panel-card">
+          <h2>🛡️ অথেনটিক ভেরিফাইড ব্যানার (বড় স্ক্রিনে দেখানো ব্যানার)</h2>
+          <p class="panel-subtext">
+            ওয়েবসাইটের হোমপেজে বড় করে দেখানো "১০০% অথেনটিক — অফিশিয়ালি ভেরিফাইড" ব্যানার এখান থেকে অন/অফ, লেখা পরিবর্তন ও নিজের ছবি আপলোড করতে পারবেন।
+          </p>
+
+          <label class="switch-row">
+            <input type="checkbox" id="authenticBannerEnabledToggle" checked />
+            <span>হোমপেজে ভেরিফিকেশন ব্যানার দেখাবেন</span>
+          </label>
+
+          <div class="banner-admin-grid">
+            <div class="banner-admin-preview">
+              <img id="authenticBannerAdminPreview" src="images/authentic-verified-poster.jpg" alt="Banner preview" />
+            </div>
+            <div class="banner-admin-fields">
+              <div class="form-group">
+                <label>ব্যানার ছবি আপলোড (পোস্টার / অ্যাড ইমেজ)</label>
+                <div class="input-with-btn">
+                  <label class="btn-kcb-pink file-upload-label" style="padding:8px 12px; font-size:0.82rem;">
+                    <input type="file" id="authenticBannerFileInput" accept="image/*" hidden />
+                    📤 ছবি আপলোড
+                  </label>
+                  <button type="button" class="btn-kcb-outline" id="resetAuthenticBannerImgBtn" style="padding:8px 12px; font-size:0.8rem;">
+                    ♻️ ডিফল্ট
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>অথবা ছবির URL</label>
+                <input type="url" id="authenticBannerUrlInput" class="admin-input" placeholder="https://.../banner.jpg" />
+              </div>
+              <div class="form-group">
+                <label>ব্যাজ লেখা (উপরে ছোট টেক্সট)</label>
+                <input type="text" id="authenticBannerBadgeInput" class="admin-input" />
+              </div>
+              <div class="form-group">
+                <label>ব্যানারের বড় শিরোনাম (Headline)</label>
+                <input type="text" id="authenticBannerTitleInput" class="admin-input" />
+              </div>
+              <div class="form-group">
+                <label>ব্যানারের বর্ণনা</label>
+                <textarea id="authenticBannerSubtitleInput" class="admin-input" rows="2"></textarea>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label>গ্যারান্টি লাইন</label>
+                  <input type="text" id="authenticBannerGuaranteeInput" class="admin-input" />
+                </div>
+                <div class="form-group">
+                  <label>বাটনের লেখা</label>
+                  <input type="text" id="authenticBannerCtaInput" class="admin-input" />
+                </div>
+              </div>
+              <button type="button" class="btn-kcb-green" id="saveAuthenticBannerBtn" style="width:100%;">
+                💾 ব্যানার সেভ করুন
+              </button>
+            </div>
           </div>
         </div>
       </div>
