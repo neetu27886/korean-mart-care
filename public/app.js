@@ -26,7 +26,6 @@ const AppState = {
       messengerLink: 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr',
       facebookPage: 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr',
       instagramLink: 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr',
-      supportPhone: '+880 1700-000000',
       announcementText:
         '🎉 Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা)',
       heroTitle: 'Korean Mart Care — Original Skin Care Collection',
@@ -855,11 +854,6 @@ function renderSiteBrandingAndSettings() {
     customImg?.classList.add('hidden');
   }
 
-  const supportLink = document.getElementById('headerSupportLink');
-  if (supportLink) {
-    supportLink.href = s.messengerLink || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
-  }
-
   const setTxt = (id, val) => {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
@@ -874,12 +868,11 @@ function renderSiteBrandingAndSettings() {
   setTxt('uniquenessDeliveryHeading', `✅ সারা বাংলাদেশে ৳${deliveryFee} টাকায় হোম ডেলিভারি`);
   setTxt(
     'uniquenessDeliveryDesc',
-    `অর্ডারের ২৪ ঘণ্টার মধ্যে ফোন কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মধ্যে সারা বাংলাদেশে দ্রুত হোম ডেলিভারি (ডেলিভারি চার্জ মাত্র ৳${deliveryFee})।`
+    `অর্ডারের ২৪ ঘণ্টার মধ্যে অর্ডার কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মধ্যে সারা বাংলাদেশে দ্রুত হোম ডেলিভারি (ডেলিভারি চার্জ মাত্র ৳${deliveryFee})।`
   );
   setTxt('drawerDeliveryChargeText', deliveryFee);
   setTxt('footerSiteName', s.siteName || 'Korean Mart Care');
   setTxt('footerCopyName', s.siteName || 'Korean Mart Care');
-  setTxt('footerSupportPhone', s.supportPhone || '+880 1700-000000');
   setTxt('footerDeliveryCharge', `৳ ${deliveryFee}`);
   setTxt('adminHeaderSiteName', s.siteName || 'Korean Mart Care');
 }
@@ -1540,7 +1533,7 @@ function openProductDetailBySlugOrId(slugOrId) {
 
       <div class="pd-tab-content hidden" id="pdTabShipping">
         <h3>Delivery Options Overview — ${escapeHtml(siteName)}</h3>
-        <p>আমাদের ওয়েবসাইট থেকে আপনার অর্ডারের ২৪ ঘণ্টার মাঝে আমাদের কাস্টমার কেয়ার প্রতিনিধি ফোন দিয়ে কনফার্ম করবেন। কনফার্ম হওয়ার ২৪-৪৮ ঘণ্টার মাঝে আপনি আপনার অর্ডারটি হাতে পেয়ে যাবেন।</p>
+        <p>আমাদের ওয়েবসাইট থেকে অর্ডার করার পর ২৪ ঘণ্টার মাঝে Messenger/Instagram-এ অর্ডার কনফার্ম করা হবে। কনফার্ম হওয়ার ২৪-৪৮ ঘণ্টার মাঝে আপনি আপনার অর্ডারটি হাতে পেয়ে যাবেন।</p>
         <ul>
           <li><strong>হোম ডেলিভারি চার্জ:</strong> <strong>৳ ${deliveryFee} টাকা</strong> (সারা বাংলাদেশে হোম ডেলিভারি)।</li>
           <li><strong>ক্যাশ অন ডেলিভারি:</strong> পণ্য অর্ডারের সময় কোনো অগ্রিম চার্জ নিচ্ছি না। ডেলিভারি ম্যানের সামনেই পণ্য খুলে চেক করে রিসিভ করবেন।</li>
@@ -2205,7 +2198,7 @@ function renderAdminOrdersList() {
                   .join('')}
               </select>
               <a href="https://wa.me/${waPhone}" target="_blank" rel="noopener" class="btn-kcb-green" style="padding:6px 12px; font-size:0.8rem;">
-                WhatsApp
+                💬 কাস্টমারের WhatsApp
               </a>
             </div>
           </div>
@@ -3397,7 +3390,6 @@ function bindEvents() {
     s.fontSize = document.getElementById('settingFontSize')?.value || '100%';
     s.instagramLink = document.getElementById('settingInstagramLink')?.value.trim() || 'https://www.instagram.com/korean_mart_care?mdxt=ZDZkajRwaHMybmpk&utm_source=qr';
     s.messengerLink = document.getElementById('settingMessengerLink')?.value.trim() || 'https://www.facebook.com/share/1DkbSM7DHq/?mibextid=wwXIfr';
-    s.supportPhone = document.getElementById('settingSupportPhone')?.value.trim() || '';
     s.announcementText = document.getElementById('settingAnnouncementText')?.value.trim() || '';
     s.heroTitle = document.getElementById('settingHeroTitle')?.value.trim() || '';
     s.heroSubtitle = document.getElementById('settingHeroSubtitle')?.value.trim() || '';
