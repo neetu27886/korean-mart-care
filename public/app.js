@@ -1276,11 +1276,6 @@ function renderProductsGrid() {
               </button>
             </div>
 
-            <div class="card-admin-quickbar">
-              <button type="button" class="card-admin-edit-btn" data-admin-edit-prod="${p.id}">
-                ✏️ দাম ও ছবি কন্ট্রোল (App)
-              </button>
-            </div>
           </div>
         </article>
       `;
@@ -1405,9 +1400,6 @@ function openProductDetailBySlugOrId(slugOrId) {
           <div class="pd-breadcrumb">
             Home / <span>Skin Care</span> / <span>${escapeHtml(product.primaryCategory)}</span>
           </div>
-          <button type="button" class="btn-kcb-outline" style="padding:4px 10px; font-size:0.76rem;" data-admin-edit-prod="${product.id}">
-            ✏️ App থেকে দাম/ছবি এডিট
-          </button>
         </div>
 
         <!-- Clean Bordered Brand Logo Box (Like DABO box in IMG_7790.png) -->
@@ -1927,6 +1919,188 @@ function renderWishlistBadge() {
   if (badge) badge.textContent = AppState.wishlist.length;
 }
 
+
+/* ==================== OWNER PIN GATE (পাবলিক থেকে Control App লুকানো) ==================== */
+const ADMIN_UNLOCK_KEY = 'kmc_admin_unlock_v1';
+const ADMIN_UNLOCK_HOURS = 12;
+
+function kmcFallbackHash(str) {
+  let h1 = 0x811c9dc5;
+  let h2 = 0x1000193;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    h1 = (h1 ^ c) >>> 0;
+    h1 = Math.imul(h1, 16777619) >>> 0;
+    h2 = (h2 + c * (i + 7)) >>> 0;
+    h2 = Math.imul(h2, 2654435761) >>> 0;
+  }
+  return ('f' + h1.toString(16) + h2.toString(16)).padStart(20, '0');
+}
+
+async function hashAdminPin(pin) {
+  const text = 'kmc::' + String(pin || '').trim();
+  try {
+    if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+      const buf = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+      return Array.from(new Uint8Array(buf))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+  } catch (e) {}
+  return kmcFallbackHash(text);
+}
+
+function adminUnlockIsValid() {
+  try {
+    const raw = localStorage.getItem(ADMIN_UNLOCK_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (!data || !data.at) return false;
+    return Date.now() - Number(data.at) < ADMIN_UNLOCK_HOURS * 60 * 60 * 1000;
+  } catch (e) {
+    return false;
+  }
+}
+
+function markAdminUnlocked() {
+  try {
+    localStorage.setItem(ADMIN_UNLOCK_KEY, JSON.stringify({ at: Date.now() }));
+  } catch (e) {}
+}
+
+function lockAdminAgain(notify = true) {
+  try {
+    localStorage.removeItem(ADMIN_UNLOCK_KEY);
+  } catch (e) {}
+  toggleControlApp(false);
+  if (notify) showToast('🔒 Control App আবার লক করা হয়েছে।');
+}
+
+function showAdminPinGate() {
+  const gate = document.getElementById('adminPinGate');
+  if (!gate) return;
+  gate.classList.remove('hidden');
+  const input = document.getElementById('adminPinGateInput');
+  const err = document.getElementById('adminPinGateError');
+  if (err) err.classList.add('hidden');
+  if (input) {
+    input.value = '';
+    setTimeout(() => input.focus(), 80);
+  }
+}
+
+function hideAdminPinGate() {
+  document.getElementById('adminPinGate')?.classList.add('hidden');
+}
+
+async function verifyAdminPin(pin) {
+  const s = AppState.storeState.settings || {};
+  const entered = String(pin || '').trim();
+  if (!entered) return false;
+
+  // পুরনো পদ্ধতি: সেটিংসে সরাসরি PIN থাকলে
+  if (s.adminPin && entered === String(s.adminPin).trim()) return true;
+
+  const enteredHash = await hashAdminPin(entered);
+  const enteredFallback = kmcFallbackHash('kmc::' + entered);
+
+  // নতুন পদ্ধতি: হ্যাশ (SHA-256 অথবা fallback — যেটি মিলে যায়)
+  if (s.adminPinHash && enteredHash === s.adminPinHash) return true;
+  if (s.adminPinHashFallback && enteredFallback === s.adminPinHashFallback) return true;
+
+  return false;
+}
+
+function requestControlApp() {
+  if (adminUnlockIsValid()) {
+    hideAdminPinGate();
+    toggleControlApp(true);
+    return;
+  }
+  showAdminPinGate();
+}
+
+async function setAdminPin(newPin) {
+  const pin = String(newPin || '').trim();
+  if (pin.length < 4) {
+    showToast('⚠️ PIN কমপক্ষে ৪ ডিজিটের হতে হবে।');
+    return false;
+  }
+  AppState.storeState.settings.adminPinHash = await hashAdminPin(pin);
+  AppState.storeState.settings.adminPinHashFallback = kmcFallbackHash('kmc::' + pin);
+  delete AppState.storeState.settings.adminPin;
+  markAdminUnlocked();
+  await saveStoreState('🔑 নতুন অ্যাডমিন PIN সেভ হয়েছে!');
+  return true;
+}
+
+function initAdminPinGate() {
+  const gate = document.getElementById('adminPinGate');
+  if (!gate) return;
+
+  const submit = async () => {
+    const input = document.getElementById('adminPinGateInput');
+    const err = document.getElementById('adminPinGateError');
+    const ok = await verifyAdminPin(input?.value);
+    if (!ok) {
+      err?.classList.remove('hidden');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      return;
+    }
+    markAdminUnlocked();
+    hideAdminPinGate();
+    toggleControlApp(true);
+    showToast('✅ স্বাগতম! Control App আনলক হয়েছে।');
+  };
+
+  document.getElementById('adminPinGateSubmitBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    submit();
+  });
+  document.getElementById('adminPinGateCancelBtn')?.addEventListener('click', () => hideAdminPinGate());
+  document.getElementById('adminPinGateInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      submit();
+    }
+  });
+  gate.addEventListener('click', (e) => {
+    if (e.target === gate) hideAdminPinGate();
+  });
+
+  // গোপন এন্ট্রি: লোগোতে ৫ বার দ্রুত ট্যাপ করলে PIN স্ক্রিন আসবে
+  const logoArea = document.querySelector('.brand-logo-showcase-frame') || document.getElementById('headerLogoWrap');
+  if (logoArea) {
+    let taps = 0;
+    let timer = null;
+    logoArea.addEventListener('click', () => {
+      taps++;
+      clearTimeout(timer);
+      timer = setTimeout(() => (taps = 0), 1200);
+      if (taps >= 5) {
+        taps = 0;
+        requestControlApp();
+      }
+    });
+  }
+
+  document.getElementById('saveAdminPinBtn')?.addEventListener('click', async () => {
+    const val = document.getElementById('adminPinInput')?.value.trim();
+    if (!val) {
+      showToast('আগে নতুন PIN লিখুন।');
+      return;
+    }
+    const ok = await setAdminPin(val);
+    const el = document.getElementById('adminPinInput');
+    if (ok && el) el.value = '';
+  });
+
+  document.getElementById('lockAdminAppBtn')?.addEventListener('click', () => lockAdminAgain());
+}
+
 /* ==================== CONTROL APP (ADMIN PANEL) FUNCTIONS ==================== */
 function toggleControlApp(forceOpen) {
   AppState.isControlAppOpen =
@@ -1934,18 +2108,20 @@ function toggleControlApp(forceOpen) {
 
   const storeView = document.getElementById('storefrontView');
   const adminView = document.getElementById('controlAppView');
-  const toggleBtn = document.getElementById('toggleControlAppBtn');
 
   if (AppState.isControlAppOpen) {
+    if (!adminUnlockIsValid() && forceOpen) {
+      AppState.isControlAppOpen = false;
+      showAdminPinGate();
+      return;
+    }
     storeView?.classList.add('hidden');
     adminView?.classList.remove('hidden');
-    if (toggleBtn) toggleBtn.innerHTML = `<span>← Back to Store</span>`;
     renderAdminDashboard();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else {
     adminView?.classList.add('hidden');
     storeView?.classList.remove('hidden');
-    if (toggleBtn) toggleBtn.innerHTML = `<span>📱 Control App</span>`;
   }
 }
 
@@ -2629,8 +2805,12 @@ function handleInitialUrlRouting() {
   }
   const appMode = params.get('app');
 
-  if (appMode === 'admin' || window.location.hash === '#admin') {
-    toggleControlApp(true);
+  if (appMode === 'admin' || window.location.hash === '#admin' || window.location.pathname === '/admin') {
+    if (adminUnlockIsValid()) {
+      toggleControlApp(true);
+    } else {
+      setTimeout(showAdminPinGate, 400);
+    }
   }
   if (prodSlug) {
     openProductDetailBySlugOrId(prodSlug);
@@ -2691,10 +2871,9 @@ function bindEvents() {
     });
   });
 
-  // Toggle Control App
-  document.getElementById('toggleControlAppBtn')?.addEventListener('click', () => toggleControlApp());
+  // Control App — শুধুমাত্র মালিকের জন্য (PIN দিয়ে সুরক্ষিত)
+  initAdminPinGate();
   document.getElementById('backToStorefrontBtn')?.addEventListener('click', () => toggleControlApp(false));
-  document.getElementById('footerOpenAdminBtn')?.addEventListener('click', () => toggleControlApp(true));
 
   // Hero Featured Sun Stick button
   document.getElementById('heroFeaturedProductBtn')?.addEventListener('click', () => {

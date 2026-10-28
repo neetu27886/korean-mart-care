@@ -46,7 +46,7 @@ function readStoreState() {
       announcementText: '✨ Korean Mart Care-এ স্বাগতম! ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪-৪৮ ঘণ্টার মধ্যে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ১১০ টাকা) ✨',
       heroTitle: 'Authentic Korean Glass Skin Care',
       heroSubtitle: 'দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অরিজিনাল স্কিনকেয়ার কালেকশন এখন Korean Mart Care-এ।',
-      adminPin: '1234'
+      adminPinHash: 'b22f24a17359d16ae4425fc2d3dfcc8db5d0f71904b2e75dbcd52cba8b677bcd'
     },
     productOverrides: {},
     customProducts: [],

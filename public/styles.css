@@ -3195,3 +3195,137 @@ body {
   border-color: #F5E3A6;
   color: #8A6D00;
 }
+
+/* ==================== OWNER PIN GATE ==================== */
+.pin-gate-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 20, 20, 0.62);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.pin-gate-card {
+  width: 100%;
+  max-width: 380px;
+  background: #FFFFFF;
+  border-radius: 16px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-modal);
+  padding: 26px 22px 20px;
+  text-align: center;
+}
+
+.pin-gate-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: var(--kcb-pink-soft);
+  color: var(--kcb-pink);
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pin-gate-card h3 {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+
+.pin-gate-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.pin-gate-input {
+  width: 100%;
+  text-align: center;
+  letter-spacing: 0.5em;
+  font-size: 1.25rem;
+  font-weight: 800;
+  padding: 12px 14px;
+  border: 1.5px solid var(--border-medium);
+  border-radius: 10px;
+  outline: none;
+  color: var(--text-dark);
+  background: #FCFCFC;
+}
+
+.pin-gate-input:focus {
+  border-color: var(--kcb-pink);
+  box-shadow: 0 0 0 3px rgba(224, 24, 110, 0.12);
+}
+
+.pin-gate-error {
+  color: #B00020;
+  background: #FFF0F0;
+  border: 1px solid #F7C5C5;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 8px 10px;
+  margin-top: 10px;
+}
+
+.pin-gate-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.pin-gate-actions button {
+  flex: 1;
+  padding: 11px 12px;
+  font-size: 0.86rem;
+  border-radius: 9px;
+}
+
+.pin-gate-hint {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ==================== ADMIN PIN BOX (CONTROL APP) ==================== */
+.admin-pin-box {
+  background: #FFFFFF;
+  border: 1.5px solid #FFE0B2;
+  border-left: 5px solid #F5A623;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.admin-pin-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.admin-pin-head strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #8A5A00;
+}
+
+.admin-pin-head span {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}

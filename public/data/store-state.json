@@ -11,7 +11,6 @@
     "announcementText": "✨ Korean Mart Care — ১০০% অথেনটিক কোরিয়ান স্কিনকেয়ার প্রোডাক্ট | অর্ডারের ২৪ ঘণ্টার মাঝে কনফার্মেশন এবং ২৪-৪৮ ঘণ্টার মাঝে সারা বাংলাদেশে হোম ডেলিভারি (ডেলিভারি চার্জ ৳১১০) ✨",
     "heroTitle": "Korean Mart Care — Original Skin Care Collection",
     "heroSubtitle": "দক্ষিণ কোরিয়া থেকে সরাসরি আমদানিকৃত ১০০% অরিজিনাল স্কিনকেয়ার কালেকশন এখন Korean Mart Care-এ।",
-    "adminPin": "1234",
     "fontFamily": "'Poppins', 'Noto Sans Bengali', sans-serif",
     "fontSize": "110%",
     "priceRateMode": "old_kcbazar",
@@ -23,7 +22,9 @@
     "authenticBannerSubtitle": "প্রতিটি প্রোডাক্টের গায়ে থাকে অরিজিনাল হলোগ্রাম QR স্টিকার। অফিশিয়াল সাইটে স্ক্যান করে যাচাই করে তারপর ডেলিভারি ম্যানের সামনে রিসিভ করুন — কোনো ঝুঁকি নেই।",
     "authenticBannerGuarantee": "✅ আগে স্ক্যান করবেন, তারপর রিসিভ করবেন — ফেক প্রমাণ করতে পারলে ডাবল টাকা ক্যাশব্যাক!",
     "authenticBannerCta": "ভেরিফাইড প্রোডাক্টগুলো দেখুন",
-    "authenticBannerImage": "images/authentic-verified-poster.jpg"
+    "authenticBannerImage": "images/authentic-verified-poster.jpg",
+    "adminPinHash": "b22f24a17359d16ae4425fc2d3dfcc8db5d0f71904b2e75dbcd52cba8b677bcd",
+    "adminPinHashFallback": "000fc594a042d6baac01"
   },
   "productOverrides": {
     "11313": {

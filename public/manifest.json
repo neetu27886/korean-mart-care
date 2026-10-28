@@ -1,11 +1,11 @@
 {
-  "name": "Korean Mart Care — Skincare Store & Control App",
+  "name": "Korean Mart Care — 100% Authentic Korean Skincare",
   "short_name": "Korean Mart Care",
-  "description": "100% Authentic Korean Skincare in Bangladesh - Storefront & Admin Control App",
+  "description": "Korean Mart Care — 100% Authentic Korean Skincare in Bangladesh",
   "start_url": "/?app=store",
   "display": "standalone",
-  "background_color": "#FAF7F4",
-  "theme_color": "#1E3A2F",
+  "background_color": "#FFFFFF",
+  "theme_color": "#E0186E",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='26' fill='%231E3A2F'/%3E%3Cpath d='M60 22C45 36 42 56 60 76C78 56 75 36 60 22Z' fill='%23E8C5B0'/%3E%3Cpath d='M36 48C38 66 48 76 60 78C50 62 44 52 36 48Z' fill='%23A3C9A8'/%3E%3Cpath d='M84 48C82 66 72 76 60 78C70 62 76 52 84 48Z' fill='%23A3C9A8'/%3E%3Ctext x='60' y='102' font-family='sans-serif' font-size='18' font-weight='bold' fill='%23FAF7F4' text-anchor='middle'%3EKMC%3C/text%3E%3C/svg%3E",

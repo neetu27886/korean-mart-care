@@ -80,7 +80,7 @@
         <div id="searchDropdown" class="search-dropdown hidden"></div>
       </div>
 
-      <!-- Right Icons (Brands, Wishlist, Cart, Control App) -->
+      <!-- Right Icons (Brands, Wishlist, Cart) -->
       <div class="header-actions">
         <button type="button" class="header-icon-btn" id="openBrandsModalBtn" title="Korean Brands">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
@@ -106,9 +106,6 @@
           <span class="kcb-count-badge" id="cartCountBadge">0</span>
         </button>
 
-        <button type="button" class="control-app-btn" id="toggleControlAppBtn" title="Open Control App">
-          <span>📱 Control App</span>
-        </button>
       </div>
     </div>
 
@@ -522,6 +519,28 @@
         <div class="form-group" style="margin-bottom:8px;">
           <label>📢 উপরের পিঙ্ক রানিং ব্যানারের লেখা (Top Running Banner Text):</label>
           <input type="text" id="quickAnnouncementInput" class="admin-input" placeholder="উপরের রানিং ব্যানারের লেখা এখানে পরিবর্তন করুন..." />
+        </div>
+
+        <!-- ADMIN PIN (মালিকের গোপন প্রবেশ) -->
+        <div class="admin-pin-box">
+          <div class="admin-pin-head">
+            <div>
+              <strong>🔑 Control App অ্যাডমিন PIN (গোপন প্রবেশ)</strong>
+              <span>ওয়েবসাইটে কোনো “Control App” বাটন নেই — শুধু এই PIN দিয়ে মালিক ঢুকতে পারবেন।</span>
+            </div>
+            <button type="button" class="btn-kcb-outline" id="lockAdminAppBtn" style="padding:6px 12px; font-size:0.78rem; background:#fff;">
+              🔒 এখনই লক করুন
+            </button>
+          </div>
+          <div class="form-row-2" style="align-items:end;">
+            <div class="form-group" style="margin-bottom:6px;">
+              <label>নতুন PIN (কমপক্ষে ৪ ডিজিট):</label>
+              <input type="password" id="adminPinInput" class="admin-input" inputmode="numeric" autocomplete="off" placeholder="নতুন PIN লিখুন" />
+            </div>
+            <div class="form-group" style="margin-bottom:6px;">
+              <button type="button" class="btn-kcb-green" id="saveAdminPinBtn" style="width:100%;">🔑 নতুন PIN সেভ করুন</button>
+            </div>
+          </div>
         </div>
 
         <!-- PRICE RATE LOCK (KC Bazar আগের রেট) -->
@@ -1275,7 +1294,6 @@
           <li><a href="#catalogSection">সকল স্কিনকেয়ার প্রোডাক্ট</a></li>
           <li><a href="#brandCollectionSection">কোরিয়ান ব্র্যান্ড কালেকশন</a></li>
           <li><button type="button" class="footer-link-btn" id="footerOpenCartBtn">শপিং কার্ট ও চেকআউট</button></li>
-          <li><button type="button" class="footer-link-btn" id="footerOpenAdminBtn">📱 Korean Mart Care Control App</button></li>
         </ul>
       </div>
     </div>
@@ -1351,5 +1369,31 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <script src="/app.js"></script>
+
+  <!-- ==================== OWNER PIN GATE (শুধু মালিকের জন্য) ==================== -->
+  <div class="pin-gate-backdrop hidden" id="adminPinGate" role="dialog" aria-modal="true" aria-labelledby="adminPinGateTitle">
+    <div class="pin-gate-card">
+      <div class="pin-gate-icon">🔒</div>
+      <h3 id="adminPinGateTitle">Owner Access Only</h3>
+      <p class="pin-gate-sub">এই অংশ শুধুমাত্র ওয়েবসাইটের মালিকের জন্য। PIN দিয়ে প্রবেশ করুন।</p>
+      <input
+        type="password"
+        id="adminPinGateInput"
+        class="pin-gate-input"
+        inputmode="numeric"
+        autocomplete="off"
+        maxlength="16"
+        placeholder="••••"
+        aria-label="Admin PIN"
+      />
+      <p class="pin-gate-error hidden" id="adminPinGateError">❌ ভুল PIN! আবার চেষ্টা করুন।</p>
+      <div class="pin-gate-actions">
+        <button type="button" class="btn-kcb-pink" id="adminPinGateSubmitBtn">🔓 আনলক করুন</button>
+        <button type="button" class="btn-kcb-outline" id="adminPinGateCancelBtn">✕ বন্ধ করুন</button>
+      </div>
+      <small class="pin-gate-hint">PIN পরিবর্তন করবেন Control App → ⚡ কুইক কন্ট্রোল → 🔑 অ্যাডমিন PIN থেকে।</small>
+    </div>
+  </div>
+
 </body>
 </html>
