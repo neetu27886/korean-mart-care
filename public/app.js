@@ -440,6 +440,68 @@ function buildExportTable(format) {
         });
       }
     });
+  } else if (format === 'midmart') {
+    // MidMart (midmart.com.bd) seller bulk-import format
+    headers = ['name','category','sub_category','sub_sub_category','brand','short_description','description','sku','barcode','box_number','price','sale_price','cost_price','weight','length','width','height','warranty_type','warranty_period','warranty_unit','warranty_note','stock_quantity','low_stock_threshold','status','is_featured','meta_title','meta_description','meta_keywords','video_url','thumbnail','images'];
+    const toKg = (w) => {
+      const m = String(w || '').toLowerCase().match(/([\d.]+)\s*(kg|g|gm|gram|ml|l|oz)/);
+      if (!m) return '';
+      const v = parseFloat(m[1]);
+      if (!isFinite(v)) return '';
+      const u = m[2];
+      if (u === 'kg' || u === 'l') return Math.round(v * 1000) / 1000;
+      if (u === 'oz') return Math.round((v * 28.3495 / 1000) * 1000) / 1000;
+      return Math.round((v / 1000) * 1000) / 1000;
+    };
+    rows = products.map((p) => {
+      const imgs = kmcProductImages(p);
+      const nameTxt = p.name || '';
+      const brandTxt = p.brand && p.brand !== 'Korean Skincare' ? p.brand : '';
+      let descHtml = p.description || '';
+      let plain = kmcStripHtml(descHtml);
+      if (plain.trim().length < 40) {
+        descHtml =
+          '<p><strong>' + escapeHtml(nameTxt) + '</strong></p><ul>' +
+          (brandTxt ? '<li>Brand: ' + escapeHtml(brandTxt) + '</li>' : '') +
+          '<li>Category: ' + escapeHtml(p.primaryCategory || 'Skin Care') + '</li>' +
+          (p.weight ? '<li>Size: ' + escapeHtml(p.weight) + '</li>' : '') +
+          '<li>100% authentic Korean skincare, verified with official hologram QR sticker.</li>' +
+          '<li>Scan and verify before you receive — fake proof means double money back.</li>' +
+          '<li>Delivery charge 110 BDT all over Bangladesh, 2-3 days delivery, cash on delivery.</li></ul>' +
+          '<p>Shop: Korean Mart Care — 100% authentic K-beauty store.</p>';
+        plain = kmcStripHtml(descHtml);
+      }
+      const shortDesc = (nameTxt + (brandTxt ? ' — ' + brandTxt : '') + ' · 100% authentic Korean skincare, official verification sticker included.').slice(0, 280);
+      const sku = String(p.sku || '').trim() || 'KMC-' + p.id;
+      return [
+        nameTxt,
+        'Skin Care',
+        '',
+        '',
+        brandTxt,
+        shortDesc,
+        descHtml,
+        sku,
+        /^\d+$/.test(sku) ? sku : '',
+        '',
+        Number(p.regularPrice) || Number(p.salePrice) || 0,
+        (Number(p.salePrice) || 0) < (Number(p.regularPrice) || 0) ? Number(p.salePrice) : '',
+        '',
+        toKg(p.weight),
+        '', '', '',
+        '', '', '', '',
+        p.inStock === false ? 0 : 100,
+        5,
+        1,
+        0,
+        (nameTxt + ' — Korean Mart Care').slice(0, 100),
+        plain.slice(0, 157) + (plain.length > 157 ? '...' : ''),
+        [brandTxt.toLowerCase(), (p.primaryCategory || '').toLowerCase(), 'korean skincare bangladesh', 'korean mart care'].filter(Boolean).join(', '),
+        '',
+        imgs[0] || '',
+        imgs.slice(0, 5).join(' | ')
+      ];
+    });
   } else if (format === 'pricelist') {
     headers = ['#', 'Product Name', 'Brand', 'Size / Weight', 'Regular Price', 'Sale Price', 'Discount', 'Image 1', 'Image 2', 'Image 3', 'Product Link'];
     rows = products.map((p, i) => {
